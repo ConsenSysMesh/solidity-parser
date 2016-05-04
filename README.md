@@ -2,7 +2,7 @@
 
 A Solidity parser in Javascript. So we can evaluate and alter Solidity code without resorting to cruddy preprocessing.  
 
-### :warn: WARNING :warn: 
+### ⚠️ WARNING ⚠️ 
 
 This is pre-alpha software. The goal of it is to take Solidity code as input and return an object as output that can be used to correctly describe that Solidity code. The structure of the resultant object is highly likely to change as the parser's features get filled out. **This parser is set to ignore Solidity constructs it's not yet able to handle.** Or, it might just error. So watch out.
 
