@@ -93,3 +93,15 @@ You'll receiving the following (or something very similar) as output. Note that 
   ]
 }
 ```
+
+### Test
+
+In a checkout of the project, run:
+
+```
+$ npm test
+```
+
+### License
+
+MIT
