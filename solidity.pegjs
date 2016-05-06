@@ -511,6 +511,7 @@ ImportToken     = "import"     !IdentifierPart
 ImportHeadersToken = "import_headers" !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
+MemoryToken     = "memory"     !IdentifierPart
 ModifierToken   = "modifier"   !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
@@ -721,14 +722,15 @@ Type
   }
 
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ id:Identifier
+  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ ismemory:MemoryToken? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
       literal: type,
       is_constant: isconstant != null,
-      is_public: ispublic != null
+      is_public: ispublic != null,
+      is_memory: ismemory != null
     }
   }
 

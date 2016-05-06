@@ -177,6 +177,7 @@ contract DualIndex {
   }
 
   function set(uint key1, uint key2, uint value) restricted {
+    uint[2][4] memory defaults; // "memory" broke things at one time.
     data[key1][key2] = value;
   }
 
