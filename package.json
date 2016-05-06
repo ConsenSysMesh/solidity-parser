@@ -1,9 +1,10 @@
 {
   "name": "solidity-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "PEG.js Solidity parser for Javascript",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/pegjs ./solidity.pegjs ./build/parser.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "bin": {
