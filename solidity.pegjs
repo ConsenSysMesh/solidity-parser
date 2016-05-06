@@ -1,5 +1,6 @@
 /*
- * JavaScript Grammar
+ * Solidity Grammar, based on Javascript grammar.
+ * The following comment is from that grammar:
  * ==================
  *
  * Based on grammar from ECMA-262, 5.1 Edition [1]. Generated parser builds a
@@ -1400,7 +1401,7 @@ EventDeclaration
   }
 
 ModifierDeclaration
-  = ModifierToken __ fnname:FunctionName __ names:ModifierNameList? __
+  = ModifierToken __ fnname:ModifierName __ names:ModifierNameList? __
     "{" __ body:FunctionBody __ "}"
     {
       return {
