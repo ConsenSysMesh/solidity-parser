@@ -26,6 +26,22 @@ var result = SolidityParser.parse("contract { ... }");
 var result = SolidityParser.parseFile("./path/to/file.sol");
 ```
 
+You can also parse a file specifically for its imports. This won't return an abstract syntax tree, but will instead return a list of files required by the parsed file:
+
+```javascript
+
+var SolitiyParser = require("solidity-parser");
+
+// Or, parse a file:
+var result = SolidityParser.parse("./path/to/file.sol", "solidity_imports");
+
+console.log(result);
+// [
+//   "SomeFile.sol",
+//   "AnotherFile.sol"
+// ]
+```
+
 **Command Line** (for convenience)
 
 ```
