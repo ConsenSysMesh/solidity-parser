@@ -2,7 +2,7 @@
 
 A Solidity parser in Javascript. So we can evaluate and alter Solidity code without resorting to cruddy preprocessing.  
 
-### ⚠️ WARNING ⚠️ 
+### ⚠️ WARNING ⚠️
 
 This is pre-alpha software. The goal of it is to take Solidity code as input and return an object as output that can be used to correctly describe that Solidity code. The structure of the resultant object is highly likely to change as the parser's features get filled out. **This parser is set to ignore Solidity constructs it's not yet able to handle.** Or, it might just error. So watch out.
 
@@ -22,7 +22,7 @@ var SolidityParser = require("solidity-parser");
 // Parse Solidity code as a string:
 var result = SolidityParser.parse("contract { ... }");
 
-// Or, parse a file: 
+// Or, parse a file:
 var result = SolidityParser.parseFile("./path/to/file.sol");
 ```
 
@@ -33,7 +33,7 @@ You can also parse a file specifically for its imports. This won't return an abs
 var SolitiyParser = require("solidity-parser");
 
 // Or, parse a file:
-var result = SolidityParser.parse("./path/to/file.sol", "solidity_imports");
+var result = SolidityParser.parse("./path/to/file.sol", "imports");
 
 console.log(result);
 // [
@@ -45,7 +45,7 @@ console.log(result);
 **Command Line** (for convenience)
 
 ```
-$ solidity-parser ./path/to/file.js 
+$ solidity-parser ./path/to/file.js
 ```
 
 ### Results
@@ -60,7 +60,7 @@ contract MyContract {
 }
 ```
 
-You'll receiving the following (or something very similar) as output. Note that the structure of mappings could be made more clear, and this will likely be changed in the future. 
+You'll receiving the following (or something very similar) as output. Note that the structure of mappings could be made more clear, and this will likely be changed in the future.
 
 ```json
 {
