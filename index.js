@@ -1,24 +1,37 @@
 var PEG = require("pegjs");
 var fs = require("fs");
 var path = require("path");
-var builtParser = require("./build/parser");
+
+var builtParsers = {
+  "solidity": require("./build/parser"),
+  "solidity_imports": require("./build/imports_parser")
+};
 
 var parser = null;
 
 // TODO: Make all this async.
 module.exports = {
-  buildParser: function(rebuild) {
+  buildParser: function(parser_name, rebuild) {
     if (parser == null) {
       if (rebuild == true) {
-        var parserfile = fs.readFileSync(path.resolve("./solidity.pegjs"), {encoding: "utf8"});
+        var parserfile = fs.readFileSync(path.resolve("./" + parser_name + ".pegjs"), {encoding: "utf8"});
         return PEG.buildParser(parserfile);
       }
-      return builtParser;
+      return builtSolidityParser;
     }
     return parser;
   },
-  parse: function(source, rebuild) {
-    var parser = this.buildParser(rebuild);
+  parse: function(source, parser_name, rebuild) {
+    if (typeof parser_name == "boolean") {
+      rebuild = parser_name;
+      parser_name = null;
+    }
+
+    if (parser_name == null) {
+      parser_name = "solidity";
+    }
+
+    var parser = this.buildParser(parser_name, rebuild);
 
     var result;
     try {
@@ -32,7 +45,7 @@ module.exports = {
 
     return result;
   },
-  parseFile: function(file, rebuild) {
-    return this.parse(fs.readFileSync(path.resolve(file), {encoding: "utf8"}), rebuild);
+  parseFile: function(file, parser_name, rebuild) {
+    return this.parse(fs.readFileSync(path.resolve(file), {encoding: "utf8"}), parser_name, rebuild);
   }
 };

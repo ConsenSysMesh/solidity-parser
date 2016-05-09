@@ -210,7 +210,6 @@ Keyword
   / FunctionToken
   / IfToken
   / ImportToken
-  / ImportHeadersToken
   / InstanceofToken
   / InToken
   / NewToken
@@ -478,6 +477,7 @@ Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 /* Tokens */
 
+AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
 CaseToken       = "case"       !IdentifierPart
 CatchToken      = "catch"      !IdentifierPart
@@ -500,6 +500,7 @@ FalseToken      = "false"      !IdentifierPart
 FinallyToken    = "finally"    !IdentifierPart
 FinneyToken     = "finney"     !IdentifierPart
 ForToken        = "for"        !IdentifierPart
+FromToken       = "from"       !IdentifierPart
 FunctionToken   = "function"   !IdentifierPart
 GetToken        = "get"        !IdentifierPart
 IfToken         = "if"         !IdentifierPart
@@ -508,7 +509,6 @@ IndexedToken    = "indexed"    !IdentifierPart
 InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
-ImportHeadersToken = "import_headers" !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
 MemoryToken     = "memory"     !IdentifierPart
@@ -1034,7 +1034,6 @@ Statement
   / ExpressionStatement
   / IfStatement
   / ImportStatement
-  / ImportHeadersStatement
   / IterationStatement
   / ContinueStatement
   / BreakStatement
@@ -1136,21 +1135,50 @@ IfStatement
     }
 
 ImportStatement
-  = ImportToken __ value:StringLiteral __ EOS
+  = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS
   {
     return {
       type: "ImportStatement",
-      value: value.value
+      from: from.value,
+      symbols: [],
+      alias: alias != null ? alias[2].name : null
+    }
+  }
+  / ImportToken __ "*" __ AsToken __ alias:Identifier __ FromToken __ from:StringLiteral __ EOS
+  {
+    return {
+      type: "ImportStatement",
+      from: from.value,
+      symbols: [{
+        type: "Symbol",
+        name: "*",
+        alias: alias.name
+      }]
+    }
+  }
+  / ImportToken __ "{" __ symbols:SymbolList __ "}" __ FromToken __ from:StringLiteral __ EOS
+  {
+    return {
+      type: "ImportStatement",
+      from: from.value,
+      symbols: symbols
     }
   }
 
-ImportHeadersStatement
-  = ImportHeadersToken __ value:StringLiteral __ EOS
+
+SymbolList
+  = head:Symbol tail:( __ "," __ Symbol)* {
+      return buildList(head, tail, 3);
+    }
+
+Symbol
+  = name:Identifier __ alias:(AsToken __ Identifier)?
   {
     return {
-      type: "ImportHeadersStatement",
-      value: value.value
-    }
+      type: "Symbol",
+      name: name.name,
+      alias: alias != null ? alias[2].name : name.name
+    };
   }
 
 IterationStatement

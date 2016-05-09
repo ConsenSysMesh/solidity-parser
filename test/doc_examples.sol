@@ -1,5 +1,10 @@
 // Examples taken from the Solidity documentation online.
 
+import "SomeFile.sol";
+import "SomeFile.sol" as SomeOtherFile;
+import * as SomeSymbol from "AnotherFile.sol";
+import {symbol1 as alias, symbol2} from "File.sol";
+
 contract c {
   function c()
   {

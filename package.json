@@ -4,7 +4,7 @@
   "description": "PEG.js Solidity parser for Javascript",
   "main": "index.js",
   "scripts": {
-    "build": "./node_modules/.bin/pegjs ./solidity.pegjs ./build/parser.js",
+    "build": "./node_modules/.bin/pegjs ./solidity.pegjs ./build/parser.js && ./node_modules/.bin/pegjs ./solidity_imports.pegjs ./build/imports_parser.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "bin": {
