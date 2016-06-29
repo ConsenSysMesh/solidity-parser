@@ -1409,7 +1409,7 @@ LibraryStatement
   }
 
 IsStatement
-  = IsToken __ modifiers:ModifierNameList
+  = IsToken __ modifiers:CommaSeparatedModifierNameList
   {
     return {
       type: "IsStatement",
@@ -1484,6 +1484,11 @@ FunctionNameList
 
 ModifierNameList
   = head:ModifierName tail:( __ ModifierName)* {
+      return buildList(head, tail, 1);
+    }
+
+CommaSeparatedModifierNameList
+  = head:ModifierName tail:( __ "," __ ModifierName)* {
       return buildList(head, tail, 1);
     }
 

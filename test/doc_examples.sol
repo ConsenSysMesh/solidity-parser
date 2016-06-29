@@ -194,3 +194,15 @@ contract DualIndex {
     return data[key1][key2];
   }
 }
+
+contract A {
+
+}
+
+contract B {
+
+}
+
+contract C is A, B {
+
+}
