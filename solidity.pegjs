@@ -509,12 +509,14 @@ IndexedToken    = "indexed"    !IdentifierPart
 InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
+InternalToken   = "internal"   !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
 MemoryToken     = "memory"     !IdentifierPart
 ModifierToken   = "modifier"   !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
+PrivateToken    = "private"    !IdentifierPart
 PublicToken     = "public"     !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
 ReturnsToken    = "returns"    !IdentifierPart
@@ -722,7 +724,7 @@ Type
   }
 
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ ismemory:MemoryToken? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
@@ -730,6 +732,8 @@ DeclarativeExpression
       literal: type,
       is_constant: isconstant != null,
       is_public: ispublic != null,
+      is_private: isprivate != null,
+      is_internal: isinternal != null,
       is_memory: ismemory != null
     }
   }
