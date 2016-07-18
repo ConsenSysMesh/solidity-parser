@@ -206,3 +206,14 @@ contract B {
 contract C is A, B {
 
 }
+
+contract TestPrivate
+{
+  uint private value;
+}
+
+contract TestInternal
+{
+  uint internal value;
+}
+

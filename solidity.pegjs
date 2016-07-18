@@ -84,7 +84,9 @@
         type:     "BinaryExpression",
         operator: element[1],
         left:     result,
-        right:    element[3]
+        right:    element[3],
+        start: location().start.offset,
+        end: location().end.offset
       };
     });
   }
@@ -95,7 +97,9 @@
         type:     "LogicalExpression",
         operator: element[1],
         left:     result,
-        right:    element[3]
+        right:    element[3],
+        start: location().start.offset,
+        end: location().end.offset
       };
     });
   }
@@ -152,7 +156,9 @@ IdentifierName "identifier"
   = head:IdentifierStart tail:IdentifierPart* {
       return {
         type: "Identifier",
-        name: head + tail.join("")
+        name: head + tail.join(""),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -239,11 +245,11 @@ Literal
   / RegularExpressionLiteral
 
 NullLiteral
-  = NullToken { return { type: "Literal", value: null }; }
+  = NullToken { return { type: "Literal", value: null, start: location().start.offset, end: location().end.offset }; }
 
 BooleanLiteral
-  = TrueToken  { return { type: "Literal", value: true  }; }
-  / FalseToken { return { type: "Literal", value: false }; }
+  = TrueToken  { return { type: "Literal", value: true, start: location().start.offset, end: location().end.offset }; }
+  / FalseToken { return { type: "Literal", value: false, start: location().start.offset, end: location().end.offset }; }
 
 /*
  * The "!(IdentifierStart / DecimalDigit)" predicate is not part of the official
@@ -272,19 +278,21 @@ DenominationLiteral
     return {
       type: "DenominationLiteral",
       literal: literal.value,
-      denomination: denomination
+      denomination: denomination,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
 DecimalLiteral
   = DecimalIntegerLiteral "." DecimalDigit* ExponentPart? {
-      return { type: "Literal", value: parseFloat(text()) };
+      return { type: "Literal", value: parseFloat(text()), start: location().start.offset, end: location().end.offset };
     }
   / "." DecimalDigit+ ExponentPart? {
-      return { type: "Literal", value: parseFloat(text()) };
+      return { type: "Literal", value: parseFloat(text()), start: location().start.offset, end: location().end.offset };
     }
   / DecimalIntegerLiteral ExponentPart? {
-      return { type: "Literal", value: parseFloat(text()) };
+      return { type: "Literal", value: parseFloat(text()), start: location().start.offset, end: location().end.offset };
     }
 
 DecimalIntegerLiteral
@@ -308,7 +316,7 @@ SignedInteger
 
 HexIntegerLiteral
   = "0x"i digits:$HexDigit+ {
-      return { type: "Literal", value: "0x" + digits };
+      return { type: "Literal", value: "0x" + digits, start: location().start.offset, end: location().end.offset };
      }
 
 HexDigit
@@ -316,10 +324,10 @@ HexDigit
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "Literal", value: chars.join(""), start: location().start.offset, end: location().end.offset };
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "Literal", value: chars.join(""), start: location().start.offset, end: location().end.offset };
     }
 
 DoubleStringCharacter
@@ -385,7 +393,7 @@ RegularExpressionLiteral "regular expression"
         error(e.message);
       }
 
-      return { type: "Literal", value: value };
+      return { type: "Literal", value: value, start: location().start.offset, end: location().end.offset };
     }
 
 RegularExpressionBody
@@ -509,12 +517,14 @@ IndexedToken    = "indexed"    !IdentifierPart
 InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
+InternalToken   = "internal"   !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
 MemoryToken     = "memory"     !IdentifierPart
 ModifierToken   = "modifier"   !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
+PrivateToken    = "private"    !IdentifierPart
 PublicToken     = "public"     !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
 ReturnsToken    = "returns"    !IdentifierPart
@@ -561,7 +571,7 @@ EOF
 /* ----- A.3 Expressions ----- */
 
 PrimaryExpression
-  = ThisToken { return { type: "ThisExpression" }; }
+  = ThisToken { return { type: "ThisExpression", start: location().start.offset, end: location().end.offset }; }
   / Identifier
   / Literal
   / ArrayLiteral
@@ -572,19 +582,25 @@ ArrayLiteral
   = "[" __ elision:(Elision __)? "]" {
       return {
         type:     "ArrayExpression",
-        elements: optionalList(extractOptional(elision, 0))
+        elements: optionalList(extractOptional(elision, 0)),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / "[" __ elements:ElementList __ "]" {
       return {
         type:     "ArrayExpression",
-        elements: elements
+        elements: elements,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / "[" __ elements:ElementList __ "," __ elision:(Elision __)? "]" {
       return {
         type:     "ArrayExpression",
-        elements: elements.concat(optionalList(extractOptional(elision, 0)))
+        elements: elements.concat(optionalList(extractOptional(elision, 0))),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -605,12 +621,12 @@ Elision
   = "," commas:(__ ",")* { return filledArray(commas.length + 1, null); }
 
 ObjectLiteral
-  = "{" __ "}" { return { type: "ObjectExpression", properties: [] }; }
+  = "{" __ "}" { return { type: "ObjectExpression", properties: [], start: location().start.offset, end: location().end.offset }; }
   / "{" __ properties:PropertyNameAndValueList __ "}" {
-       return { type: "ObjectExpression", properties: properties };
+       return { type: "ObjectExpression", properties: properties, start: location().start.offset, end: location().end.offset };
      }
   / "{" __ properties:PropertyNameAndValueList __ "," __ "}" {
-       return { type: "ObjectExpression", properties: properties };
+       return { type: "ObjectExpression", properties: properties, start: location().start.offset, end: location().end.offset };
      }
 PropertyNameAndValueList
   = head:PropertyAssignment tail:(__ "," __ PropertyAssignment)* {
@@ -619,7 +635,7 @@ PropertyNameAndValueList
 
 PropertyAssignment
   = key:PropertyName __ ":" __ value:AssignmentExpression {
-      return { key: key, value: value, kind: "init" };
+      return { key: key, value: value, kind: "init", start: location().start.offset, end: location().end.offset };
     }
 
 PropertyName
@@ -634,15 +650,15 @@ MemberExpression
   = head:(
         PrimaryExpression
       / NewToken __ callee:MemberExpression __ args:Arguments {
-          return { type: "NewExpression", callee: callee, arguments: args };
+          return { type: "NewExpression", callee: callee, arguments: args, start: location().start.offset, end: location().end.offset };
         }
     )
     tail:(
         __ "[" __ property:Expression __ "]" {
-          return { property: property, computed: true };
+          return { property: property, computed: true, start: location().start.offset, end: location().end.offset };
         }
       / __ "." __ property:IdentifierName {
-          return { property: property, computed: false };
+          return { property: property, computed: false, start: location().start.offset, end: location().end.offset };
         }
     )*
     {
@@ -651,7 +667,9 @@ MemberExpression
           type:     "MemberExpression",
           object:   result,
           property: element.property,
-          computed: element.computed
+          computed: element.computed,
+          start: location().start.offset,
+          end: location().end.offset
         };
       });
     }
@@ -659,31 +677,35 @@ MemberExpression
 NewExpression
   = MemberExpression
   / NewToken __ callee:NewExpression {
-      return { type: "NewExpression", callee: callee, arguments: [] };
+      return { type: "NewExpression", callee: callee, arguments: [], start: location().start.offset, end: location().end.offset };
     }
 
 CallExpression
   = head:(
       callee:MemberExpression __ args:Arguments {
-        return { type: "CallExpression", callee: callee, arguments: args };
+        return { type: "CallExpression", callee: callee, arguments: args, start: location().start.offset, end: location().end.offset };
       }
     )
     tail:(
         __ args:Arguments {
-          return { type: "CallExpression", arguments: args };
+          return { type: "CallExpression", arguments: args, start: location().start.offset, end: location().end.offset };
         }
       / __ "[" __ property:Expression __ "]" {
           return {
             type:     "MemberExpression",
             property: property,
-            computed: true
+            computed: true,
+            start: location().start.offset,
+            end: location().end.offset
           };
         }
       / __ "." __ property:IdentifierName {
           return {
             type:     "MemberExpression",
             property: property,
-            computed: false
+            computed: false,
+            start: location().start.offset,
+            end: location().end.offset
           };
         }
     )*
@@ -717,12 +739,14 @@ Type
       type: "Type",
       literal: literal.type == "Identifier" ? literal.name : literal,
       members: optionalList(members).map(function(m) {return m[1].name;}),
-      array_parts: optionalList(parts).map(function(p) {return p[2] != null ? p[2].value : null})
+      array_parts: optionalList(parts).map(function(p) {return p[2] != null ? p[2].value : null}),
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ ismemory:MemoryToken? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
@@ -730,7 +754,11 @@ DeclarativeExpression
       literal: type,
       is_constant: isconstant != null,
       is_public: ispublic != null,
-      is_memory: ismemory != null
+      is_private: isprivate != null,
+      is_internal: isinternal != null,
+      is_memory: ismemory != null,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -740,8 +768,10 @@ Mapping
     return {
      type: "MappingExpression",
      from: from,
-     to: to
-    }
+     to: to,
+     start: location().start.offset,
+     end: location().end.offset
+   }
   }
 
 PostfixExpression
@@ -750,7 +780,9 @@ PostfixExpression
         type:     "UpdateExpression",
         operator: operator,
         argument: argument,
-        prefix:   false
+        prefix:   false,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / LeftHandSideExpression
@@ -770,7 +802,9 @@ UnaryExpression
         type:     type,
         operator: operator,
         argument: argument,
-        prefix:   true
+        prefix:   true,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -929,7 +963,9 @@ ConditionalExpression
         type:       "ConditionalExpression",
         test:       test,
         consequent: consequent,
-        alternate:  alternate
+        alternate:  alternate,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / LogicalORExpression
@@ -943,7 +979,9 @@ ConditionalExpressionNoIn
         type:       "ConditionalExpression",
         test:       test,
         consequent: consequent,
-        alternate:  alternate
+        alternate:  alternate,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / LogicalORExpressionNoIn
@@ -957,7 +995,9 @@ AssignmentExpression
         type:     "AssignmentExpression",
         operator: "=",
         left:     left,
-        right:    right
+        right:    right,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / left:LeftHandSideExpression __
@@ -968,7 +1008,9 @@ AssignmentExpression
         type:     "AssignmentExpression",
         operator: operator,
         left:     left,
-        right:    right
+        right:    right,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / ConditionalExpression
@@ -982,7 +1024,9 @@ AssignmentExpressionNoIn
         type:     "AssignmentExpression",
         operator: "=",
         left:     left,
-        right:    right
+        right:    right,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / left:LeftHandSideExpression __
@@ -993,7 +1037,9 @@ AssignmentExpressionNoIn
         type:     "AssignmentExpression",
         operator: operator,
         left:     left,
-        right:    right
+        right:    right,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / ConditionalExpressionNoIn
@@ -1051,7 +1097,9 @@ Block
   = "{" __ body:(StatementList __)? "}" {
       return {
         type: "BlockStatement",
-        body: optionalList(extractOptional(body, 0))
+        body: optionalList(extractOptional(body, 0)),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1062,7 +1110,9 @@ VariableStatement
   = VarToken __ declarations:VariableDeclarationList EOS {
       return {
         type:         "VariableDeclaration",
-        declarations: declarations
+        declarations: declarations,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1081,7 +1131,9 @@ VariableDeclaration
       return {
         type: "VariableDeclarator",
         id:   id,
-        init: extractOptional(init, 1)
+        init: extractOptional(init, 1),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1090,7 +1142,9 @@ VariableDeclarationNoIn
       return {
         type: "VariableDeclarator",
         id:   id,
-        init: extractOptional(init, 1)
+        init: extractOptional(init, 1),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1101,13 +1155,15 @@ InitialiserNoIn
   = "=" !"=" __ expression:AssignmentExpressionNoIn { return expression; }
 
 EmptyStatement
-  = ";" { return { type: "EmptyStatement" }; }
+  = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }
 
 ExpressionStatement
   = !("{" / FunctionToken / ContractToken / LibraryToken / StructToken / EnumToken) expression:Expression EOS {
       return {
         type:       "ExpressionStatement",
-        expression: expression
+        expression: expression,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1121,7 +1177,9 @@ IfStatement
         type:       "IfStatement",
         test:       test,
         consequent: consequent,
-        alternate:  alternate
+        alternate:  alternate,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / IfToken __ "(" __ test:Expression __ ")" __
@@ -1130,7 +1188,9 @@ IfStatement
         type:       "IfStatement",
         test:       test,
         consequent: consequent,
-        alternate:  null
+        alternate:  null,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1141,7 +1201,9 @@ ImportStatement
       type: "ImportStatement",
       from: from.value,
       symbols: [],
-      alias: alias != null ? alias[2].name : null
+      alias: alias != null ? alias[2].name : null,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
   / ImportToken __ "*" __ AsToken __ alias:Identifier __ FromToken __ from:StringLiteral __ EOS
@@ -1153,7 +1215,9 @@ ImportStatement
         type: "Symbol",
         name: "*",
         alias: alias.name
-      }]
+      }],
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
   / ImportToken __ "{" __ symbols:SymbolList __ "}" __ FromToken __ from:StringLiteral __ EOS
@@ -1161,7 +1225,9 @@ ImportStatement
     return {
       type: "ImportStatement",
       from: from.value,
-      symbols: symbols
+      symbols: symbols,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1177,7 +1243,9 @@ Symbol
     return {
       type: "Symbol",
       name: name.name,
-      alias: alias != null ? alias[2].name : name.name
+      alias: alias != null ? alias[2].name : name.name,
+      start: location().start.offset,
+      end: location().end.offset
     };
   }
 
@@ -1185,10 +1253,10 @@ IterationStatement
   = DoToken __
     body:Statement __
     WhileToken __ "(" __ test:Expression __ ")" EOS
-    { return { type: "DoWhileStatement", body: body, test: test }; }
+    { return { type: "DoWhileStatement", body: body, test: test, start: location().start.offset, end: location().end.offset }; }
   / WhileToken __ "(" __ test:Expression __ ")" __
     body:Statement
-    { return { type: "WhileStatement", test: test, body: body }; }
+    { return { type: "WhileStatement", test: test, body: body, start: location().start.offset, end: location().end.offset }; }
   / ForToken __
     "(" __
     init:(ExpressionNoIn __)? ";" __
@@ -1202,7 +1270,9 @@ IterationStatement
         init:   extractOptional(init, 0),
         test:   extractOptional(test, 0),
         update: extractOptional(update, 0),
-        body:   body
+        body:   body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / ForToken __
@@ -1221,7 +1291,9 @@ IterationStatement
         },
         test:   extractOptional(test, 0),
         update: extractOptional(update, 0),
-        body:   body
+        body:   body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / ForToken __
@@ -1236,7 +1308,9 @@ IterationStatement
         type:  "ForInStatement",
         left:  left,
         right: right,
-        body:  body
+        body:  body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / ForToken __
@@ -1254,38 +1328,40 @@ IterationStatement
           declarations: declarations
         },
         right: right,
-        body:  body
+        body:  body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
 ContinueStatement
   = ContinueToken EOS {
-      return { type: "ContinueStatement", label: null };
+      return { type: "ContinueStatement", label: null, start: location().start.offset, end: location().end.offset };
     }
   / ContinueToken _ label:Identifier EOS {
-      return { type: "ContinueStatement", label: label };
+      return { type: "ContinueStatement", label: label, start: location().start.offset, end: location().end.offset };
     }
 
 BreakStatement
   = BreakToken EOS {
-      return { type: "BreakStatement", label: null };
+      return { type: "BreakStatement", label: null, start: location().start.offset, end: location().end.offset };
     }
   / BreakToken _ label:Identifier EOS {
-      return { type: "BreakStatement", label: label };
+      return { type: "BreakStatement", label: label, start: location().start.offset, end: location().end.offset };
     }
 
 ReturnStatement
   = ReturnToken EOS {
-      return { type: "ReturnStatement", argument: null };
+      return { type: "ReturnStatement", argument: null, start: location().start.offset, end: location().end.offset };
     }
   / ReturnToken _ argument:Expression EOS {
-      return { type: "ReturnStatement", argument: argument };
+      return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
     }
 
 WithStatement
   = WithToken __ "(" __ object:Expression __ ")" __
     body:Statement
-    { return { type: "WithStatement", object: object, body: body }; }
+    { return { type: "WithStatement", object: object, body: body, start: location().start.offset, end: location().end.offset }; }
 
 SwitchStatement
   = SwitchToken __ "(" __ discriminant:Expression __ ")" __
@@ -1294,7 +1370,9 @@ SwitchStatement
       return {
         type:         "SwitchStatement",
         discriminant: discriminant,
-        cases:        cases
+        cases:        cases,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1320,7 +1398,9 @@ CaseClause
       return {
         type:       "SwitchCase",
         test:       test,
-        consequent: optionalList(extractOptional(consequent, 1))
+        consequent: optionalList(extractOptional(consequent, 1)),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1329,18 +1409,20 @@ DefaultClause
       return {
         type:       "SwitchCase",
         test:       null,
-        consequent: optionalList(extractOptional(consequent, 1))
+        consequent: optionalList(extractOptional(consequent, 1)),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
 LabelledStatement
   = label:Identifier __ ":" __ body:Statement {
-      return { type: "LabeledStatement", label: label, body: body };
+      return { type: "LabeledStatement", label: label, body: body, start: location().start.offset, end: location().end.offset };
     }
 
 ThrowStatement
   = ThrowToken EOS {
-      return { type: "ThrowStatement"};
+      return { type: "ThrowStatement", start: location().start.offset, end: location().end.offset };
     }
 
 TryStatement
@@ -1349,7 +1431,9 @@ TryStatement
         type:      "TryStatement",
         block:     block,
         handler:   handler,
-        finalizer: finalizer
+        finalizer: finalizer,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / TryToken __ block:Block __ handler:Catch {
@@ -1357,7 +1441,9 @@ TryStatement
         type:      "TryStatement",
         block:     block,
         handler:   handler,
-        finalizer: null
+        finalizer: null,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
   / TryToken __ block:Block __ finalizer:Finally {
@@ -1365,7 +1451,9 @@ TryStatement
         type:      "TryStatement",
         block:     block,
         handler:   null,
-        finalizer: finalizer
+        finalizer: finalizer,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1374,7 +1462,9 @@ Catch
       return {
         type:  "CatchClause",
         param: param,
-        body:  body
+        body:  body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1382,7 +1472,7 @@ Finally
   = FinallyToken __ block:Block { return block; }
 
 DebuggerStatement
-  = DebuggerToken EOS { return { type: "DebuggerStatement" }; }
+  = DebuggerToken EOS { return { type: "DebuggerStatement", start: location().start.offset, end: location().end.offset }; }
 
 ContractStatement
   = ContractToken __ id:Identifier __ is:IsStatement? __
@@ -1392,7 +1482,9 @@ ContractStatement
       type: "ContractStatement",
       name: id.name,
       is: is != null ? is.names : [],
-      body: body
+      body: body,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1404,7 +1496,9 @@ LibraryStatement
       type: "LibraryStatement",
       name: id.name,
       is: is != null ? is.names : [],
-      body: body
+      body: body,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1413,7 +1507,9 @@ IsStatement
   {
     return {
       type: "IsStatement",
-      names: modifiers //buildList(head, tail, 3).map(function(i) {return i.name;})
+      names: modifiers,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1426,7 +1522,9 @@ EventDeclaration
       type: "EventDeclaration",
       name: fnname.name,
       params: fnname.params,
-      modifiers: names
+      modifiers: names,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1439,7 +1537,9 @@ ModifierDeclaration
         name: fnname.name,
         params: fnname.params,
         modifiers: names,
-        body: body
+        body: body,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1453,7 +1553,9 @@ FunctionDeclaration
         params: fnname.params,
         modifiers: names,
         body: body != null ? body[2] : null,
-        is_abstract: body == null
+        is_abstract: body == null,
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1463,7 +1565,9 @@ FunctionName
     return {
       type: "FunctionName",
       name: id != null ? id.name : null,
-      params: params != null ? params[2] : []
+      params: params != null ? params[2] : [],
+      start: location().start.offset,
+      end: location().end.offset
     };
   }
 
@@ -1473,7 +1577,9 @@ ModifierName
     return {
       type: "ModifierName",
       name: id != null ? id.name : null,
-      params: params != null ? params[2] : []
+      params: params != null ? params[2] : [],
+      start: location().start.offset,
+      end: location().end.offset
     };
   }
 
@@ -1500,7 +1606,9 @@ InformalParameter
       literal: type,
       id: (id || {}).name,
       is_indexed: isindexed != null,
-      is_storage: isstorage != null
+      is_storage: isstorage != null,
+      start: location().start.offset,
+      end: location().end.offset
     };
   }
 
@@ -1514,7 +1622,9 @@ FunctionBody
   = body:SourceElements? {
       return {
         type: "BlockStatement",
-        body: optionalList(body)
+        body: optionalList(body),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
@@ -1524,7 +1634,9 @@ EnumDeclaration
     return {
       type: "EnumDeclaration",
       name: id.name,
-      members: buildList(head, tail, 3).map(function(i) {return i.name;})
+      members: buildList(head, tail, 3).map(function(i) {return i.name;}),
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1533,7 +1645,9 @@ StructDeclaration
   {
     return {
       type: "StructDeclaration",
-      body: body != null ? body.declarations : null
+      body: body != null ? body.declarations : null,
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1542,7 +1656,9 @@ DeclarativeExpressionList
   {
     return {
       type: "DeclarativeExpressionList",
-      declarations: buildList(head, tail, 1)
+      declarations: buildList(head, tail, 1),
+      start: location().start.offset,
+      end: location().end.offset
     }
   }
 
@@ -1550,7 +1666,9 @@ Program
   = body:SourceElements? {
       return {
         type: "Program",
-        body: optionalList(body)
+        body: optionalList(body),
+        start: location().start.offset,
+        end: location().end.offset
       };
     }
 
