@@ -1645,6 +1645,7 @@ StructDeclaration
   {
     return {
       type: "StructDeclaration",
+      name: id.name,
       body: body != null ? body.declarations : null,
       start: location().start.offset,
       end: location().end.offset
