@@ -1,6 +1,6 @@
 {
-  "name": "solidity-parser",
-  "version": "0.0.9",
+  "name": "solparse",
+  "version": "1.0.0",
   "description": "PEG.js Solidity parser for Javascript",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "bin": {
     "solidity-parser": "./cli.js"
   },
-  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com)",
+  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com), Raghav Dua <duaraghav8@gmail.com> (http://raghavdua.com)",
   "license": "MIT",
   "dependencies": {
     "mocha": "^2.4.5",
