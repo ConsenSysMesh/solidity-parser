@@ -1,0 +1,20 @@
+{
+  "name": "solidity-parser",
+  "version": "0.0.9",
+  "description": "PEG.js Solidity parser for Javascript",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/pegjs ./solidity.pegjs ./build/parser.js && ./node_modules/.bin/pegjs ./imports.pegjs ./build/imports_parser.js",
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "bin": {
+    "solidity-parser": "./cli.js"
+  },
+  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com)",
+  "license": "MIT",
+  "dependencies": {
+    "mocha": "^2.4.5",
+    "pegjs": "^0.9.0",
+    "yargs": "^4.6.0"
+  }
+}
