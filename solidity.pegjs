@@ -267,7 +267,8 @@ Denomination
   = token:(WeiToken
   / SzaboToken
   / FinneyToken
-  / EtherToken)
+  / EtherToken
+  / DaysToken)
   {
     return token[0];
   }
@@ -494,6 +495,7 @@ ConstToken      = "const"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
 ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
+DaysToken       = "days"       !IdentifierPart
 DebuggerToken   = "debugger"   !IdentifierPart
 DefaultToken    = "default"    !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
@@ -825,7 +827,7 @@ MultiplicativeExpression
     { return buildBinaryExpression(head, tail); }
 
 MultiplicativeOperator
-  = $("*" !"=")
+  = $("*""*"? !"=")
   / $("/" !"=")
   / $("%" !"=")
 
@@ -1127,10 +1129,10 @@ VariableDeclarationListNoIn
     }
 
 VariableDeclaration
-  = id:Identifier init:(__ Initialiser)? {
+  = id:(Identifier / "(" Identifier ")") init:(__ Initialiser)? {
       return {
         type: "VariableDeclarator",
-        id:   id,
+        id: id.constructor === Array ? id [1] : id,
         init: extractOptional(init, 1),
         start: location().start.offset,
         end: location().end.offset
@@ -1595,7 +1597,7 @@ ModifierNameList
 
 CommaSeparatedModifierNameList
   = head:ModifierName tail:( __ "," __ ModifierName)* {
-      return buildList(head, tail, 1);
+      return buildList(head, tail, 3);
     }
 
 InformalParameter
@@ -1645,6 +1647,7 @@ StructDeclaration
   {
     return {
       type: "StructDeclaration",
+      name: id.name,
       body: body != null ? body.declarations : null,
       start: location().start.offset,
       end: location().end.offset

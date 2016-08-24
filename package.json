@@ -10,7 +10,7 @@
   "bin": {
     "solidity-parser": "./cli.js"
   },
-  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com)",
+  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com), Raghav Dua <duaraghav8@gmail.com> (http://raghavdua.com)",
   "license": "MIT",
   "dependencies": {
     "mocha": "^2.4.5",

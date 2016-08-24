@@ -7,7 +7,7 @@ describe("Parser", function() {
     done();
   });
 
-  it("parses documentation exmples using imports parser without throwing an error", function(done) {
+  it("parses documentation examples using imports parser without throwing an error", function(done) {
     var result = SolidityParser.parseFile("./test/doc_examples.sol", "imports", true);
     //console.log(JSON.stringify(result, null, 2));
     done();
@@ -21,7 +21,7 @@ describe("Built Parser", function() {
     done();
   });
 
-  it("parses documentation exmples using imports parser without throwing an error", function(done) {
+  it("parses documentation examples using imports parser without throwing an error", function(done) {
     var result = SolidityParser.parseFile("./test/doc_examples.sol", "imports", false);
     //console.log(JSON.stringify(result, null, 2));
     done();

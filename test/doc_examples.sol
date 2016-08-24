@@ -217,3 +217,10 @@ contract TestInternal
   uint internal value;
 }
 
+contract FromSolparse is A, B, TestPrivate, TestInternal {
+  function() {
+    uint a = 6 ** 9;
+    var (x) = 100;
+    uint y = 2 days
+  }
+}
