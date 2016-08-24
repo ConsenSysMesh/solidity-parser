@@ -3211,15 +3211,21 @@ module.exports = (function() {
           s3 = peg$parse__();
           if (s3 !== peg$FAILED) {
             s4 = [];
-            s5 = peg$parseBlockList();
+            s5 = peg$parseComment();
             if (s5 === peg$FAILED) {
-              s5 = peg$parseNonClosingBracketCharacter();
-            }
-            while (s5 !== peg$FAILED) {
-              s4.push(s5);
               s5 = peg$parseBlockList();
               if (s5 === peg$FAILED) {
                 s5 = peg$parseNonClosingBracketCharacter();
+              }
+            }
+            while (s5 !== peg$FAILED) {
+              s4.push(s5);
+              s5 = peg$parseComment();
+              if (s5 === peg$FAILED) {
+                s5 = peg$parseBlockList();
+                if (s5 === peg$FAILED) {
+                  s5 = peg$parseNonClosingBracketCharacter();
+                }
               }
             }
             if (s4 !== peg$FAILED) {

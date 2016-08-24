@@ -366,7 +366,7 @@ SourceElements
     }
 
 BlockList
-  = __ "{" __ ( BlockList / NonClosingBracketCharacter)* __ "}"
+  = __ "{" __ ( Comment / BlockList / NonClosingBracketCharacter )* __ "}"
 
 NonClosingBracketCharacter
   = (!("}") SourceCharacter)

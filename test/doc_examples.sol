@@ -224,3 +224,15 @@ contract FromSolparse is A, B, TestPrivate, TestInternal {
     uint y = 2 days
   }
 }
+
+contract CommentedOutFunction {
+  // FYI: This empty function, as well as the commented
+  // out function below (bad code) is important to this test.
+  function() {
+
+  }
+
+  // function something()
+  //  uint x = 10;
+  // }
+}
