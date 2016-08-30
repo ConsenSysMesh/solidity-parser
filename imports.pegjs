@@ -125,9 +125,12 @@ HexDigit
 AsToken         = "as"        !IdentifierPart
 ContractToken   = "contract"  !IdentifierPart
 FromToken       = "from"      !IdentifierPart
+ForToken        = "for"       !IdentifierPart
 ImportToken     = "import"    !IdentifierPart
 IsToken         = "is"        !IdentifierPart
 LibraryToken    = "library"   !IdentifierPart
+MappingToken    = "mapping"   !IdentifierPart
+UsingToken      = "using"     !IdentifierPart
 
 /* Skipped */
 
@@ -205,37 +208,38 @@ Statement
   = ImportStatement
   / ContractStatement
   / LibraryStatement
+  / UsingStatement
 
-  ImportStatement
-    = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS
-    {
-      return {
-        type: "ImportStatement",
-        from: from.value,
-        symbols: [],
-        alias: alias != null ? alias[2].name : null
-      }
+ImportStatement
+  = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS
+  {
+    return {
+      type: "ImportStatement",
+      from: from.value,
+      symbols: [],
+      alias: alias != null ? alias[2].name : null
     }
-    / ImportToken __ "*" __ AsToken __ alias:Identifier __ FromToken __ from:StringLiteral __ EOS
-    {
-      return {
-        type: "ImportStatement",
-        from: from.value,
-        symbols: [{
-          type: "Symbol",
-          name: "*",
-          alias: alias.name
-        }]
-      }
+  }
+  / ImportToken __ "*" __ AsToken __ alias:Identifier __ FromToken __ from:StringLiteral __ EOS
+  {
+    return {
+      type: "ImportStatement",
+      from: from.value,
+      symbols: [{
+        type: "Symbol",
+        name: "*",
+        alias: alias.name
+      }]
     }
-    / ImportToken __ "{" __ symbols:SymbolList __ "}" __ FromToken __ from:StringLiteral __ EOS
-    {
-      return {
-        type: "ImportStatement",
-        from: from.value,
-        symbols: symbols
-      }
+  }
+  / ImportToken __ "{" __ symbols:SymbolList __ "}" __ FromToken __ from:StringLiteral __ EOS
+  {
+    return {
+      type: "ImportStatement",
+      from: from.value,
+      symbols: symbols
     }
+  }
 
 SymbolList
   = head:Symbol tail:( __ "," __ Symbol)* {
@@ -271,6 +275,53 @@ IsStatement
       type: "IsStatement",
       names: modifiers
     }
+  }
+
+UsingStatement
+  = UsingToken __ library:Identifier __ ForToken __ type:Type __ EOS
+  {
+    return {
+      type: "UsingStatement",
+      library: library.name,
+      for: type,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / UsingToken __ library:Identifier __ ForToken __ "*" __ EOS
+  {
+    return {
+      type: "UsingStatement",
+      library: library.name,
+      for: "*",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+Type
+  = literal:(Mapping / Identifier) members:("." Identifier)* parts:("[" __ (DecimalDigit)? __ "]")*
+  {
+    return {
+      type: "Type",
+      literal: literal.type == "Identifier" ? literal.name : literal,
+      members: optionalList(members).map(function(m) {return m[1].name;}),
+      array_parts: optionalList(parts).map(function(p) {return p[2] != null ? p[2].value : null}),
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+Mapping
+  = MappingToken __ "(" __ from:Type __ "=>" __ to:Type __ ")"
+  {
+    return {
+     type: "MappingExpression",
+     from: from,
+     to: to,
+     start: location().start.offset,
+     end: location().end.offset
+   }
   }
 
 ModifierNameList
