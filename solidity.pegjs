@@ -541,6 +541,7 @@ ThrowToken      = "throw"      !IdentifierPart
 TrueToken       = "true"       !IdentifierPart
 TryToken        = "try"        !IdentifierPart
 TypeofToken     = "typeof"     !IdentifierPart
+UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
 VoidToken       = "void"       !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
@@ -637,7 +638,7 @@ PropertyNameAndValueList
 
 PropertyAssignment
   = key:PropertyName __ ":" __ value:AssignmentExpression {
-      return { key: key, value: value, kind: "init", start: location().start.offset, end: location().end.offset };
+      return { type: "Property", key: key, value: value, kind: "init", start: location().start.offset, end: location().end.offset };
     }
 
 PropertyName
@@ -1094,6 +1095,7 @@ Statement
   / DebuggerStatement
   / ContractStatement
   / LibraryStatement
+  / UsingStatement
 
 Block
   = "{" __ body:(StatementList __)? "}" {
@@ -1233,6 +1235,27 @@ ImportStatement
     }
   }
 
+UsingStatement
+  = UsingToken __ library:Identifier __ ForToken __ type:Type __ EOS
+  {
+    return {
+      type: "UsingStatement",
+      library: library.name,
+      for: type,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / UsingToken __ library:Identifier __ ForToken __ "*" __ EOS
+  {
+    return {
+      type: "UsingStatement",
+      library: library.name,
+      for: "*",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 SymbolList
   = head:Symbol tail:( __ "," __ Symbol)* {

@@ -236,3 +236,14 @@ contract CommentedOutFunction {
   //  uint x = 10;
   // }
 }
+
+library UsingExampleLibrary {
+  function sum(uint[] storage self) returns (uint s) {
+    for (uint i = 0; i < self.length; i++)
+      s += self[i];
+  }
+}
+
+contract UsingExampleContract {
+  using UsingExampleLibrary for uint[];
+}
