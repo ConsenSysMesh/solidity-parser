@@ -1,5 +1,15 @@
 // Examples taken from the Solidity documentation online.
 
+// for pragma version numbers, see https://docs.npmjs.com/misc/semver#versions
+pragma solidity 0.4.0;
+pragma solidity v0.4.0; // like npm
+pragma solidity ^0.4.0;
+pragma solidity >= 0.4.0;
+pragma solidity <= 0.4.0;
+pragma solidity < 0.4.0;
+pragma solidity > 0.4.0;
+pragma solidity != 0.4.0;
+
 import "SomeFile.sol";
 import "SomeFile.sol" as SomeOtherFile;
 import * as SomeSymbol from "AnotherFile.sol";

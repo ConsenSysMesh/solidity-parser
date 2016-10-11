@@ -130,6 +130,8 @@ ImportToken     = "import"    !IdentifierPart
 IsToken         = "is"        !IdentifierPart
 LibraryToken    = "library"   !IdentifierPart
 MappingToken    = "mapping"   !IdentifierPart
+PragmaToken     = "pragma"    !IdentifierPart
+SolidityToken   = "solidity"  !IdentifierPart
 UsingToken      = "using"     !IdentifierPart
 
 /* Skipped */
@@ -205,10 +207,20 @@ UnicodeConnectorPunctuation
 /* ----- A.4 Statements ----- */
 
 Statement
-  = ImportStatement
+  = PragmaStatement
+  / ImportStatement
   / ContractStatement
   / LibraryStatement
   / UsingStatement
+
+PragmaStatement
+  = PragmaToken __ SolidityToken __ ([^;]+) EOS {
+    return {
+      type: "PragmaStatement",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 ImportStatement
   = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS

@@ -107,6 +107,15 @@
   function optionalList(value) {
     return value !== null ? value : [];
   }
+
+  function normalizeVersionLiteral(item) {
+    if (item.constructor.name === 'Array') {
+      item [1] = item [1].join ('');
+      item = item.join ('');
+    }
+
+    return item;
+  }
 }
 
 Start
@@ -219,6 +228,7 @@ Keyword
   / InstanceofToken
   / InToken
   / NewToken
+  / PragmaToken
   / ReturnToken
   / SwitchToken
   / ThisToken
@@ -243,6 +253,7 @@ Literal
   / NumericLiteral
   / StringLiteral
   / RegularExpressionLiteral
+  / VersionLiteral
 
 NullLiteral
   = NullToken { return { type: "Literal", value: null, start: location().start.offset, end: location().end.offset }; }
@@ -426,6 +437,14 @@ RegularExpressionClassChar
 RegularExpressionFlags
   = IdentifierPart*
 
+VersionLiteral
+  = operator:(RelationalOperator / EqualityOperator / BitwiseXOROperator)? __ ("v")? major:DecimalIntegerLiteral "." minor:DecimalIntegerLiteral "." patch:DecimalIntegerLiteral {
+    return {
+      operator: operator,
+      version: (normalizeVersionLiteral(major) + "." + normalizeVersionLiteral(minor) + "." + normalizeVersionLiteral(patch))
+    };
+  }
+
 /*
  * Unicode Character Categories
  *
@@ -527,10 +546,12 @@ ModifierToken   = "modifier"   !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
 PrivateToken    = "private"    !IdentifierPart
+PragmaToken     = "pragma"     !IdentifierPart
 PublicToken     = "public"     !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
 ReturnsToken    = "returns"    !IdentifierPart
 SetToken        = "set"        !IdentifierPart
+SolidityToken   = "solidity"   !IdentifierPart
 StorageToken    = "storage"    !IdentifierPart
 StructToken     = "struct"     !IdentifierPart
 SuperToken      = "super"      !IdentifierPart
@@ -1078,6 +1099,7 @@ ExpressionNoIn
 
 Statement
   = Block
+  / PragmaStatement
   / VariableStatement
   / EmptyStatement
   / ExpressionStatement
@@ -1197,6 +1219,16 @@ IfStatement
         end: location().end.offset
       };
     }
+
+PragmaStatement
+  = PragmaToken __ SolidityToken __ version:VersionLiteral EOS {
+    return {
+      type: "PragmaStatement",
+      version: version,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 ImportStatement
   = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS
