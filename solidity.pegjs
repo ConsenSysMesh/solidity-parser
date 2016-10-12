@@ -223,6 +223,7 @@ Keyword
   / FinallyToken
   / ForToken
   / FunctionToken
+  / HexToken
   / IfToken
   / ImportToken
   / InstanceofToken
@@ -251,6 +252,7 @@ Literal
   / BooleanLiteral
   / DenominationLiteral
   / NumericLiteral
+  / HexStringLiteral
   / StringLiteral
   / RegularExpressionLiteral
   / VersionLiteral
@@ -341,6 +343,9 @@ StringLiteral "string"
   / "'" chars:SingleStringCharacter* "'" {
       return { type: "Literal", value: chars.join(""), start: location().start.offset, end: location().end.offset };
     }
+
+HexStringLiteral
+  = HexToken StringLiteral
 
 DoubleStringCharacter
   = !('"' / "\\" / LineTerminator) SourceCharacter { return text(); }
@@ -533,6 +538,7 @@ ForToken        = "for"        !IdentifierPart
 FromToken       = "from"       !IdentifierPart
 FunctionToken   = "function"   !IdentifierPart
 GetToken        = "get"        !IdentifierPart
+HexToken        = "hex"        !IdentifierPart
 IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart

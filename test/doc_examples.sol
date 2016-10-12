@@ -258,3 +258,9 @@ library UsingExampleLibrary {
 contract UsingExampleContract {
   using UsingExampleLibrary for uint[];
 }
+
+contract NewStuff {
+  function someFunction() {
+    string a = hex"ab1248fe";
+  }
+}
