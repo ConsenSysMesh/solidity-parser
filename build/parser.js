@@ -195,6 +195,7 @@ module.exports = (function() {
         peg$c119 = { type: "class", value: "[\\]\\\\]", description: "[\\]\\\\]" },
         peg$c120 = function(operator, major, minor, patch) {
             return {
+              type: "VersionLiteral",
               operator: operator,
               version: (normalizeVersionLiteral(major) + "." + normalizeVersionLiteral(minor) + "." + normalizeVersionLiteral(patch))
             };
@@ -705,10 +706,11 @@ module.exports = (function() {
                 end: location().end.offset
               };
             },
-        peg$c411 = function(version) {
+        peg$c411 = function(start_version, end_version) {
             return {
               type: "PragmaStatement",
-              version: version,
+              start_version: start_version,
+              end_version: end_version,
               start: location().start.offset,
               end: location().end.offset
             }
@@ -12165,7 +12167,7 @@ module.exports = (function() {
     }
 
     function peg$parsePragmaStatement() {
-      var s0, s1, s2, s3, s4, s5, s6;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
       s0 = peg$currPos;
       s1 = peg$parsePragmaToken();
@@ -12178,11 +12180,26 @@ module.exports = (function() {
             if (s4 !== peg$FAILED) {
               s5 = peg$parseVersionLiteral();
               if (s5 !== peg$FAILED) {
-                s6 = peg$parseEOS();
+                s6 = peg$parse__();
                 if (s6 !== peg$FAILED) {
-                  peg$savedPos = s0;
-                  s1 = peg$c411(s5);
-                  s0 = s1;
+                  s7 = peg$parseVersionLiteral();
+                  if (s7 === peg$FAILED) {
+                    s7 = null;
+                  }
+                  if (s7 !== peg$FAILED) {
+                    s8 = peg$parseEOS();
+                    if (s8 !== peg$FAILED) {
+                      peg$savedPos = s0;
+                      s1 = peg$c411(s5, s7);
+                      s0 = s1;
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
+                  } else {
+                    peg$currPos = s0;
+                    s0 = peg$FAILED;
+                  }
                 } else {
                   peg$currPos = s0;
                   s0 = peg$FAILED;

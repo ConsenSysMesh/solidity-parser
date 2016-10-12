@@ -440,6 +440,7 @@ RegularExpressionFlags
 VersionLiteral
   = operator:(RelationalOperator / EqualityOperator / BitwiseXOROperator)? __ ("v")? major:DecimalIntegerLiteral "." minor:DecimalIntegerLiteral "." patch:DecimalIntegerLiteral {
     return {
+      type: "VersionLiteral",
       operator: operator,
       version: (normalizeVersionLiteral(major) + "." + normalizeVersionLiteral(minor) + "." + normalizeVersionLiteral(patch))
     };
@@ -1221,10 +1222,11 @@ IfStatement
     }
 
 PragmaStatement
-  = PragmaToken __ SolidityToken __ version:VersionLiteral EOS {
+  = PragmaToken __ SolidityToken __ start_version:VersionLiteral __ end_version:(VersionLiteral?) EOS {
     return {
       type: "PragmaStatement",
-      version: version,
+      start_version: start_version,
+      end_version: end_version,
       start: location().start.offset,
       end: location().end.offset
     }

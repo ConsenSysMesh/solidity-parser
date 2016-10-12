@@ -9,6 +9,7 @@ pragma solidity <= 0.4.0;
 pragma solidity < 0.4.0;
 pragma solidity > 0.4.0;
 pragma solidity != 0.4.0;
+pragma solidity >=0.4.0 <0.4.8; // from https://github.com/ethereum/solidity/releases/tag/v0.4.0
 
 import "SomeFile.sol";
 import "SomeFile.sol" as SomeOtherFile;
