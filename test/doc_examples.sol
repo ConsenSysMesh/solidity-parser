@@ -260,7 +260,7 @@ contract UsingExampleContract {
 }
 
 contract NewStuff {
-  function someFunction() {
+  function someFunction() payable {
     string a = hex"ab1248fe";
   }
 }
