@@ -30,7 +30,7 @@ You can also parse a file specifically for its imports. This won't return an abs
 
 ```javascript
 
-var SolitiyParser = require("solidity-parser");
+var SolidityParser = require("solidity-parser");
 
 var result = SolidityParser.parseFile("./path/to/file.sol", "imports");
 
