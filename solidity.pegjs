@@ -1106,12 +1106,10 @@ ExpressionNoIn
 
 Statement
   = Block
-  / PragmaStatement
   / VariableStatement
   / EmptyStatement
   / ExpressionStatement
   / IfStatement
-  / ImportStatement
   / IterationStatement
   / ContinueStatement
   / BreakStatement
@@ -1122,8 +1120,6 @@ Statement
   / ThrowStatement
   / TryStatement
   / DebuggerStatement
-  / ContractStatement
-  / LibraryStatement
   / UsingStatement
 
 Block
@@ -1729,7 +1725,7 @@ DeclarativeExpressionList
   }
 
 Program
-  = body:SourceElements? {
+  = body:SourceUnits? {
       return {
         type: "Program",
         body: optionalList(body),
@@ -1737,6 +1733,17 @@ Program
         end: location().end.offset
       };
     }
+
+SourceUnits
+  = head:SourceUnit tail:(__ SourceUnit)* {
+      return buildList(head, tail, 1);
+    }
+
+SourceUnit
+  = PragmaStatement
+  / ImportStatement
+  / ContractStatement
+  / LibraryStatement
 
 SourceElements
   = head:SourceElement tail:(__ SourceElement)* {
