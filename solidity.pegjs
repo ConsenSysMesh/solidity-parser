@@ -281,7 +281,12 @@ Denomination
   / SzaboToken
   / FinneyToken
   / EtherToken
-  / DaysToken)
+  / SecondsToken
+  / MinutesToken
+  / HoursToken
+  / DaysToken
+  / WeeksToken
+  / YearsToken)
   {
     return token[0];
   }
@@ -539,6 +544,7 @@ FromToken       = "from"       !IdentifierPart
 FunctionToken   = "function"   !IdentifierPart
 GetToken        = "get"        !IdentifierPart
 HexToken        = "hex"        !IdentifierPart
+HoursToken      = "hours"      !IdentifierPart
 IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart
@@ -549,6 +555,7 @@ InternalToken   = "internal"   !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
 MemoryToken     = "memory"     !IdentifierPart
+MinutesToken    = "minutes"    !IdentifierPart
 ModifierToken   = "modifier"   !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
@@ -557,6 +564,7 @@ PragmaToken     = "pragma"     !IdentifierPart
 PublicToken     = "public"     !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
 ReturnsToken    = "returns"    !IdentifierPart
+SecondsToken    = "seconds"    !IdentifierPart
 SetToken        = "set"        !IdentifierPart
 SolidityToken   = "solidity"   !IdentifierPart
 StorageToken    = "storage"    !IdentifierPart
@@ -572,9 +580,11 @@ TypeofToken     = "typeof"     !IdentifierPart
 UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
 VoidToken       = "void"       !IdentifierPart
+WeeksToken      = "weeks"      !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
 WhileToken      = "while"      !IdentifierPart
 WithToken       = "with"       !IdentifierPart
+YearsToken      = "years"      !IdentifierPart
 
 /* Skipped */
 
