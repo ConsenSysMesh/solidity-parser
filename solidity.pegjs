@@ -254,7 +254,6 @@ Literal
   / NumericLiteral
   / HexStringLiteral
   / StringLiteral
-  / RegularExpressionLiteral
   / VersionLiteral
 
 NullLiteral
@@ -399,48 +398,6 @@ UnicodeEscapeSequence
   = "u" digits:$(HexDigit HexDigit HexDigit HexDigit) {
       return String.fromCharCode(parseInt(digits, 16));
     }
-
-RegularExpressionLiteral "regular expression"
-  = "/" pattern:$RegularExpressionBody "/" flags:$RegularExpressionFlags {
-      var value;
-
-      try {
-        value = new RegExp(pattern, flags);
-      } catch (e) {
-        error(e.message);
-      }
-
-      return { type: "Literal", value: value, start: location().start.offset, end: location().end.offset };
-    }
-
-RegularExpressionBody
-  = RegularExpressionFirstChar RegularExpressionChar*
-
-RegularExpressionFirstChar
-  = ![*\\/[] RegularExpressionNonTerminator
-  / RegularExpressionBackslashSequence
-  / RegularExpressionClass
-
-RegularExpressionChar
-  = ![\\/[] RegularExpressionNonTerminator
-  / RegularExpressionBackslashSequence
-  / RegularExpressionClass
-
-RegularExpressionBackslashSequence
-  = "\\" RegularExpressionNonTerminator
-
-RegularExpressionNonTerminator
-  = !LineTerminator SourceCharacter
-
-RegularExpressionClass
-  = "[" RegularExpressionClassChar* "]"
-
-RegularExpressionClassChar
-  = ![\]\\] RegularExpressionNonTerminator
-  / RegularExpressionBackslashSequence
-
-RegularExpressionFlags
-  = IdentifierPart*
 
 VersionLiteral
   = operator:(RelationalOperator / EqualityOperator / BitwiseXOROperator)? __ ("v")? major:DecimalIntegerLiteral "." minor:DecimalIntegerLiteral "." patch:DecimalIntegerLiteral {
@@ -1752,10 +1709,6 @@ SourceElement
   / FunctionDeclaration
 
 /* ----- A.6 Universal Resource Identifier Character Classes ----- */
-
-/* Irrelevant. */
-
-/* ----- A.7 Regular Expressions ----- */
 
 /* Irrelevant. */
 
