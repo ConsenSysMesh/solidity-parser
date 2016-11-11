@@ -1657,16 +1657,21 @@ FunctionBody
     }
 
 EnumDeclaration
-  = EnumToken __ id:Identifier __ "{" __ head:Identifier tail:( __ "," __ Identifier)* __ "}" __ EOS
+  = EnumToken __ id:Identifier __ "{" __ members:EnumMembers? __ "}"
   {
     return {
       type: "EnumDeclaration",
       name: id.name,
-      members: buildList(head, tail, 3).map(function(i) {return i.name;}),
+      members: optionalList(members).map(function(i) {return i.name;}),
       start: location().start.offset,
       end: location().end.offset
     }
   }
+
+EnumMembers
+  = head:Identifier tail:(__ "," __ Identifier)* {
+      return buildList(head, tail, 3);
+    }
 
 StructDeclaration
   = StructToken __ id:Identifier __ "{" __ body:DeclarativeExpressionList? __ "}"
