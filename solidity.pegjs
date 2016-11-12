@@ -1639,14 +1639,16 @@ CommaSeparatedModifierNameList
     }
 
 InformalParameter
-  = type:Type __ isindexed:IndexedToken? __ isstorage:StorageToken? __ id:Identifier?
+  = type:Type __ isindexed:IndexedToken? __ isconstant:ConstantToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier?
   {
     return {
       type: "InformalParameter",
       literal: type,
       id: (id || {}).name,
       is_indexed: isindexed != null,
+      is_storage: isconstant != null,
       is_storage: isstorage != null,
+      is_memory: ismemory != null,
       start: location().start.offset,
       end: location().end.offset
     };
