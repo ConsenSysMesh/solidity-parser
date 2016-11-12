@@ -236,7 +236,6 @@ Keyword
   / TryToken
   / VarToken
   / WhileToken
-  / WithToken
 
 FutureReservedWord
   = ClassToken
@@ -534,7 +533,6 @@ VarToken        = "var"        !IdentifierPart
 WeeksToken      = "weeks"      !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
 WhileToken      = "while"      !IdentifierPart
-WithToken       = "with"       !IdentifierPart
 YearsToken      = "years"      !IdentifierPart
 
 /* Skipped */
@@ -1076,7 +1074,6 @@ Statement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
-  / WithStatement
   / LabelledStatement
   / SwitchStatement
   / ThrowStatement
@@ -1380,11 +1377,6 @@ ReturnStatement
   / ReturnToken _ argument:Expression EOS {
       return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
     }
-
-WithStatement
-  = WithToken __ "(" __ object:Expression __ ")" __
-    body:Statement
-    { return { type: "WithStatement", object: object, body: body, start: location().start.offset, end: location().end.offset }; }
 
 SwitchStatement
   = SwitchToken __ "(" __ discriminant:Expression __ ")" __
