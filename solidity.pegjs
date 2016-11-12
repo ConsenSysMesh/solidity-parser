@@ -1674,7 +1674,7 @@ FunctionBody
     }
 
 EnumDeclaration
-  = EnumToken __ id:Identifier __ "{" __ head:Identifier tail:( __ "," __ Identifier)* __ "}" __ EOS
+  = EnumToken __ id:Identifier __ "{" __ head:Identifier tail:( __ "," __ Identifier)* __ "}"
   {
     return {
       type: "EnumDeclaration",
