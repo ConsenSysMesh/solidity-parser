@@ -731,7 +731,7 @@ LeftHandSideExpression
   / NewExpression
 
 Type
-  = literal:(Mapping / Identifier) members:("." Identifier)* parts:("[" __ (NumericLiteral)? __ "]")*
+  = literal:(Mapping / Identifier) members:("." Identifier)* parts:("[" __ (Expression)? __ "]")*
   {
     return {
       type: "Type",
