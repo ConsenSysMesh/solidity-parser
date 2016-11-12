@@ -226,7 +226,6 @@ Keyword
   / HexToken
   / IfToken
   / ImportToken
-  / InstanceofToken
   / InToken
   / NewToken
   / PragmaToken
@@ -235,9 +234,7 @@ Keyword
   / ThisToken
   / ThrowToken
   / TryToken
-  / TypeofToken
   / VarToken
-  / VoidToken
   / WhileToken
   / WithToken
 
@@ -505,7 +502,6 @@ HoursToken      = "hours"      !IdentifierPart
 IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart
-InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
 InternalToken   = "internal"   !IdentifierPart
@@ -533,10 +529,8 @@ ThisToken       = "this"       !IdentifierPart
 ThrowToken      = "throw"      !IdentifierPart
 TrueToken       = "true"       !IdentifierPart
 TryToken        = "try"        !IdentifierPart
-TypeofToken     = "typeof"     !IdentifierPart
 UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
-VoidToken       = "void"       !IdentifierPart
 WeeksToken      = "weeks"      !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
 WhileToken      = "while"      !IdentifierPart
@@ -809,8 +803,6 @@ UnaryExpression
 
 UnaryOperator
   = $DeleteToken
-  / $VoidToken
-  / $TypeofToken
   / "++"
   / "--"
   / $("+" !"=")
@@ -857,7 +849,6 @@ RelationalOperator
   / ">="
   / $("<" !"<")
   / $(">" !">")
-  / $InstanceofToken
   / $InToken
 
 RelationalExpressionNoIn
@@ -870,7 +861,6 @@ RelationalOperatorNoIn
   / ">="
   / $("<" !"<")
   / $(">" !">")
-  / $InstanceofToken
 
 EqualityExpression
   = head:RelationalExpression
@@ -1051,7 +1041,6 @@ AssignmentOperator
   / "-="
   / "<<="
   / ">>="
-  / ">>>="
   / "&="
   / "^="
   / "|="
