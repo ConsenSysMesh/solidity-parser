@@ -744,7 +744,7 @@ Type
   }
 
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
@@ -754,6 +754,7 @@ DeclarativeExpression
       is_public: ispublic != null,
       is_private: isprivate != null,
       is_internal: isinternal != null,
+      is_storage: isstorage != null,
       is_memory: ismemory != null,
       start: location().start.offset,
       end: location().end.offset
