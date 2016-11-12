@@ -1061,6 +1061,11 @@ ExpressionNoIn
 
 /* ----- A.4 Statements ----- */
 
+Statements
+  = head:Statement tail:(__ Statement)* {
+      return buildList(head, tail, 1);
+    }
+
 Statement
   = Block
   / VariableStatement
@@ -1654,7 +1659,7 @@ InformalParameterList
 
 
 FunctionBody
-  = body:SourceElements? {
+  = body:Statements? {
       return {
         type: "BlockStatement",
         body: optionalList(body),
@@ -1725,12 +1730,13 @@ SourceElements
     }
 
 SourceElement
-  = Statement
+  = DeclarativeExpression __ EOS
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration
   / ModifierDeclaration
   / FunctionDeclaration
+  / UsingStatement
 
 /* ----- A.6 Universal Resource Identifier Character Classes ----- */
 
