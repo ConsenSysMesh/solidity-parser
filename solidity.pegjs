@@ -211,12 +211,10 @@ ReservedWord
 
 Keyword
   = BreakToken
-  / CaseToken
   / CatchToken
   / ContinueToken
   / ContractToken
   / DebuggerToken
-  / DefaultToken
   / DeleteToken
   / DoToken
   / ElseToken
@@ -230,7 +228,6 @@ Keyword
   / NewToken
   / PragmaToken
   / ReturnToken
-  / SwitchToken
   / ThisToken
   / ThrowToken
   / TryToken
@@ -471,7 +468,6 @@ Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
-CaseToken       = "case"       !IdentifierPart
 CatchToken      = "catch"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
 ConstToken      = "const"      !IdentifierPart
@@ -480,7 +476,6 @@ ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
 DaysToken       = "days"       !IdentifierPart
 DebuggerToken   = "debugger"   !IdentifierPart
-DefaultToken    = "default"    !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
 DoToken         = "do"         !IdentifierPart
 ElseToken       = "else"       !IdentifierPart
@@ -522,7 +517,6 @@ SolidityToken   = "solidity"   !IdentifierPart
 StorageToken    = "storage"    !IdentifierPart
 StructToken     = "struct"     !IdentifierPart
 SuperToken      = "super"      !IdentifierPart
-SwitchToken     = "switch"     !IdentifierPart
 SzaboToken      = "szabo"      !IdentifierPart
 ThisToken       = "this"       !IdentifierPart
 ThrowToken      = "throw"      !IdentifierPart
@@ -1075,7 +1069,6 @@ Statement
   / BreakStatement
   / ReturnStatement
   / LabelledStatement
-  / SwitchStatement
   / ThrowStatement
   / TryStatement
   / DebuggerStatement
@@ -1376,58 +1369,6 @@ ReturnStatement
     }
   / ReturnToken _ argument:Expression EOS {
       return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
-    }
-
-SwitchStatement
-  = SwitchToken __ "(" __ discriminant:Expression __ ")" __
-    cases:CaseBlock
-    {
-      return {
-        type:         "SwitchStatement",
-        discriminant: discriminant,
-        cases:        cases,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-CaseBlock
-  = "{" __ clauses:(CaseClauses __)? "}" {
-      return optionalList(extractOptional(clauses, 0));
-    }
-  / "{" __
-    before:(CaseClauses __)?
-    default_:DefaultClause __
-    after:(CaseClauses __)? "}"
-    {
-      return optionalList(extractOptional(before, 0))
-        .concat(default_)
-        .concat(optionalList(extractOptional(after, 0)));
-    }
-
-CaseClauses
-  = head:CaseClause tail:(__ CaseClause)* { return buildList(head, tail, 1); }
-
-CaseClause
-  = CaseToken __ test:Expression __ ":" consequent:(__ StatementList)? {
-      return {
-        type:       "SwitchCase",
-        test:       test,
-        consequent: optionalList(extractOptional(consequent, 1)),
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-DefaultClause
-  = DefaultToken __ ":" consequent:(__ StatementList)? {
-      return {
-        type:       "SwitchCase",
-        test:       null,
-        consequent: optionalList(extractOptional(consequent, 1)),
-        start: location().start.offset,
-        end: location().end.offset
-      };
     }
 
 LabelledStatement
