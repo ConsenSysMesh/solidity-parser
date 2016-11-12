@@ -211,14 +211,12 @@ ReservedWord
 
 Keyword
   = BreakToken
-  / CatchToken
   / ContinueToken
   / ContractToken
   / DebuggerToken
   / DeleteToken
   / DoToken
   / ElseToken
-  / FinallyToken
   / ForToken
   / FunctionToken
   / HexToken
@@ -230,7 +228,6 @@ Keyword
   / ReturnToken
   / ThisToken
   / ThrowToken
-  / TryToken
   / VarToken
   / WhileToken
 
@@ -468,7 +465,6 @@ Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
-CatchToken      = "catch"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
 ConstToken      = "const"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
@@ -485,7 +481,6 @@ EventToken      = "event"      !IdentifierPart
 ExportToken     = "export"     !IdentifierPart
 ExtendsToken    = "extends"    !IdentifierPart
 FalseToken      = "false"      !IdentifierPart
-FinallyToken    = "finally"    !IdentifierPart
 FinneyToken     = "finney"     !IdentifierPart
 ForToken        = "for"        !IdentifierPart
 FromToken       = "from"       !IdentifierPart
@@ -521,7 +516,6 @@ SzaboToken      = "szabo"      !IdentifierPart
 ThisToken       = "this"       !IdentifierPart
 ThrowToken      = "throw"      !IdentifierPart
 TrueToken       = "true"       !IdentifierPart
-TryToken        = "try"        !IdentifierPart
 UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
 WeeksToken      = "weeks"      !IdentifierPart
@@ -1070,7 +1064,6 @@ Statement
   / ReturnStatement
   / LabelledStatement
   / ThrowStatement
-  / TryStatement
   / DebuggerStatement
   / UsingStatement
 
@@ -1380,52 +1373,6 @@ ThrowStatement
   = ThrowToken EOS {
       return { type: "ThrowStatement", start: location().start.offset, end: location().end.offset };
     }
-
-TryStatement
-  = TryToken __ block:Block __ handler:Catch __ finalizer:Finally {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   handler,
-        finalizer: finalizer,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-  / TryToken __ block:Block __ handler:Catch {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   handler,
-        finalizer: null,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-  / TryToken __ block:Block __ finalizer:Finally {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   null,
-        finalizer: finalizer,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-Catch
-  = CatchToken __ "(" __ param:Identifier __ ")" __ body:Block {
-      return {
-        type:  "CatchClause",
-        param: param,
-        body:  body,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-Finally
-  = FinallyToken __ block:Block { return block; }
 
 DebuggerStatement
   = DebuggerToken EOS { return { type: "DebuggerStatement", start: location().start.offset, end: location().end.offset }; }
