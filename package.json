@@ -4,7 +4,7 @@
   "description": "PEG.js Solidity parser for Javascript",
   "main": "index.js",
   "scripts": {
-    "build": "pegjs ./solidity.pegjs ./build/parser.js && pegjs ./imports.pegjs ./build/imports_parser.js",
+    "build": "pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
     "test": "mocha --reporter spec"
   },
   "bin": {
@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "mocha": "^2.4.5",
-    "pegjs": "^0.9.0",
+    "pegjs": "^0.10.0",
     "yargs": "^4.6.0"
   }
 }
