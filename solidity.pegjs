@@ -463,6 +463,7 @@ Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 /* Tokens */
 
+AnonymousToken  = "anonymous"  !IdentifierPart
 AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
@@ -1419,13 +1420,13 @@ IsStatement
 /* ----- A.5 Functions and Programs ----- */
 
 EventDeclaration
-  = EventToken __ fnname:FunctionName __ names:ModifierNameList? __ EOS
+  = EventToken __ fnname:FunctionName __ isanonymous:AnonymousToken? __ EOS
   {
     return {
       type: "EventDeclaration",
       name: fnname.name,
       params: fnname.params,
-      modifiers: names,
+      is_anonymous: isanonymous != null,
       start: location().start.offset,
       end: location().end.offset
     }
