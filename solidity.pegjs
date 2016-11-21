@@ -1613,7 +1613,8 @@ SourceElements
     }
 
 SourceElement
-  = DeclarativeExpression __ EOS
+  = AssignmentExpression __ EOS
+  / DeclarativeExpression __ EOS
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration
