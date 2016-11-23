@@ -31,7 +31,8 @@ contract c {
 }
 
 contract test {
-    enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill };
+    enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
+
     function test()
     {
         choices = ActionChoices.GoStraight;
@@ -260,8 +261,11 @@ contract UsingExampleContract {
 }
 
 contract NewStuff {
+  uint[] b;
+
   function someFunction() payable {
-    string a = hex"ab1248fe";
+    string storage a = hex"ab1248fe";
+    b[2+2];
   }
 }
 

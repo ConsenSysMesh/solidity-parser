@@ -211,35 +211,25 @@ ReservedWord
 
 Keyword
   = BreakToken
-  / CaseToken
-  / CatchToken
   / ContinueToken
   / ContractToken
   / DebuggerToken
-  / DefaultToken
   / DeleteToken
   / DoToken
   / ElseToken
-  / FinallyToken
   / ForToken
   / FunctionToken
   / HexToken
   / IfToken
   / ImportToken
-  / InstanceofToken
   / InToken
   / NewToken
   / PragmaToken
   / ReturnToken
-  / SwitchToken
   / ThisToken
   / ThrowToken
-  / TryToken
-  / TypeofToken
   / VarToken
-  / VoidToken
   / WhileToken
-  / WithToken
 
 FutureReservedWord
   = ClassToken
@@ -473,10 +463,9 @@ Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 /* Tokens */
 
+AnonymousToken  = "anonymous"  !IdentifierPart
 AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
-CaseToken       = "case"       !IdentifierPart
-CatchToken      = "catch"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
 ConstToken      = "const"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
@@ -484,7 +473,6 @@ ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
 DaysToken       = "days"       !IdentifierPart
 DebuggerToken   = "debugger"   !IdentifierPart
-DefaultToken    = "default"    !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
 DoToken         = "do"         !IdentifierPart
 ElseToken       = "else"       !IdentifierPart
@@ -494,7 +482,6 @@ EventToken      = "event"      !IdentifierPart
 ExportToken     = "export"     !IdentifierPart
 ExtendsToken    = "extends"    !IdentifierPart
 FalseToken      = "false"      !IdentifierPart
-FinallyToken    = "finally"    !IdentifierPart
 FinneyToken     = "finney"     !IdentifierPart
 ForToken        = "for"        !IdentifierPart
 FromToken       = "from"       !IdentifierPart
@@ -505,7 +492,6 @@ HoursToken      = "hours"      !IdentifierPart
 IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart
-InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
 InternalToken   = "internal"   !IdentifierPart
@@ -527,20 +513,15 @@ SolidityToken   = "solidity"   !IdentifierPart
 StorageToken    = "storage"    !IdentifierPart
 StructToken     = "struct"     !IdentifierPart
 SuperToken      = "super"      !IdentifierPart
-SwitchToken     = "switch"     !IdentifierPart
 SzaboToken      = "szabo"      !IdentifierPart
 ThisToken       = "this"       !IdentifierPart
 ThrowToken      = "throw"      !IdentifierPart
 TrueToken       = "true"       !IdentifierPart
-TryToken        = "try"        !IdentifierPart
-TypeofToken     = "typeof"     !IdentifierPart
 UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
-VoidToken       = "void"       !IdentifierPart
 WeeksToken      = "weeks"      !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
 WhileToken      = "while"      !IdentifierPart
-WithToken       = "with"       !IdentifierPart
 YearsToken      = "years"      !IdentifierPart
 
 /* Skipped */
@@ -731,7 +712,7 @@ LeftHandSideExpression
   / NewExpression
 
 Type
-  = literal:(Mapping / Identifier) members:("." Identifier)* parts:("[" __ (NumericLiteral)? __ "]")*
+  = literal:(Mapping / Identifier) members:("." Identifier)* parts:("[" __ (Expression)? __ "]")*
   {
     return {
       type: "Type",
@@ -744,7 +725,7 @@ Type
   }
 
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
@@ -754,6 +735,7 @@ DeclarativeExpression
       is_public: ispublic != null,
       is_private: isprivate != null,
       is_internal: isinternal != null,
+      is_storage: isstorage != null,
       is_memory: ismemory != null,
       start: location().start.offset,
       end: location().end.offset
@@ -808,8 +790,6 @@ UnaryExpression
 
 UnaryOperator
   = $DeleteToken
-  / $VoidToken
-  / $TypeofToken
   / "++"
   / "--"
   / $("+" !"=")
@@ -856,7 +836,6 @@ RelationalOperator
   / ">="
   / $("<" !"<")
   / $(">" !">")
-  / $InstanceofToken
   / $InToken
 
 RelationalExpressionNoIn
@@ -869,7 +848,6 @@ RelationalOperatorNoIn
   / ">="
   / $("<" !"<")
   / $(">" !">")
-  / $InstanceofToken
 
 EqualityExpression
   = head:RelationalExpression
@@ -1050,7 +1028,6 @@ AssignmentOperator
   / "-="
   / "<<="
   / ">>="
-  / ">>>="
   / "&="
   / "^="
   / "|="
@@ -1071,6 +1048,11 @@ ExpressionNoIn
 
 /* ----- A.4 Statements ----- */
 
+Statements
+  = head:Statement tail:(__ Statement)* {
+      return buildList(head, tail, 1);
+    }
+
 Statement
   = Block
   / VariableStatement
@@ -1081,11 +1063,8 @@ Statement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
-  / WithStatement
   / LabelledStatement
-  / SwitchStatement
   / ThrowStatement
-  / TryStatement
   / DebuggerStatement
   / UsingStatement
 
@@ -1386,63 +1365,6 @@ ReturnStatement
       return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
     }
 
-WithStatement
-  = WithToken __ "(" __ object:Expression __ ")" __
-    body:Statement
-    { return { type: "WithStatement", object: object, body: body, start: location().start.offset, end: location().end.offset }; }
-
-SwitchStatement
-  = SwitchToken __ "(" __ discriminant:Expression __ ")" __
-    cases:CaseBlock
-    {
-      return {
-        type:         "SwitchStatement",
-        discriminant: discriminant,
-        cases:        cases,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-CaseBlock
-  = "{" __ clauses:(CaseClauses __)? "}" {
-      return optionalList(extractOptional(clauses, 0));
-    }
-  / "{" __
-    before:(CaseClauses __)?
-    default_:DefaultClause __
-    after:(CaseClauses __)? "}"
-    {
-      return optionalList(extractOptional(before, 0))
-        .concat(default_)
-        .concat(optionalList(extractOptional(after, 0)));
-    }
-
-CaseClauses
-  = head:CaseClause tail:(__ CaseClause)* { return buildList(head, tail, 1); }
-
-CaseClause
-  = CaseToken __ test:Expression __ ":" consequent:(__ StatementList)? {
-      return {
-        type:       "SwitchCase",
-        test:       test,
-        consequent: optionalList(extractOptional(consequent, 1)),
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-DefaultClause
-  = DefaultToken __ ":" consequent:(__ StatementList)? {
-      return {
-        type:       "SwitchCase",
-        test:       null,
-        consequent: optionalList(extractOptional(consequent, 1)),
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
 LabelledStatement
   = label:Identifier __ ":" __ body:Statement {
       return { type: "LabeledStatement", label: label, body: body, start: location().start.offset, end: location().end.offset };
@@ -1452,52 +1374,6 @@ ThrowStatement
   = ThrowToken EOS {
       return { type: "ThrowStatement", start: location().start.offset, end: location().end.offset };
     }
-
-TryStatement
-  = TryToken __ block:Block __ handler:Catch __ finalizer:Finally {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   handler,
-        finalizer: finalizer,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-  / TryToken __ block:Block __ handler:Catch {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   handler,
-        finalizer: null,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-  / TryToken __ block:Block __ finalizer:Finally {
-      return {
-        type:      "TryStatement",
-        block:     block,
-        handler:   null,
-        finalizer: finalizer,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-Catch
-  = CatchToken __ "(" __ param:Identifier __ ")" __ body:Block {
-      return {
-        type:  "CatchClause",
-        param: param,
-        body:  body,
-        start: location().start.offset,
-        end: location().end.offset
-      };
-    }
-
-Finally
-  = FinallyToken __ block:Block { return block; }
 
 DebuggerStatement
   = DebuggerToken EOS { return { type: "DebuggerStatement", start: location().start.offset, end: location().end.offset }; }
@@ -1544,13 +1420,13 @@ IsStatement
 /* ----- A.5 Functions and Programs ----- */
 
 EventDeclaration
-  = EventToken __ fnname:FunctionName __ names:ModifierNameList? __ EOS
+  = EventToken __ fnname:FunctionName __ isanonymous:AnonymousToken? __ EOS
   {
     return {
       type: "EventDeclaration",
       name: fnname.name,
       params: fnname.params,
-      modifiers: names,
+      is_anonymous: isanonymous != null,
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1644,14 +1520,16 @@ CommaSeparatedModifierNameList
     }
 
 InformalParameter
-  = type:Type __ isindexed:IndexedToken? __ isstorage:StorageToken? __ id:Identifier?
+  = type:Type __ isindexed:IndexedToken? __ isconstant:ConstantToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier?
   {
     return {
       type: "InformalParameter",
       literal: type,
       id: (id || {}).name,
       is_indexed: isindexed != null,
+      is_storage: isconstant != null,
       is_storage: isstorage != null,
+      is_memory: ismemory != null,
       start: location().start.offset,
       end: location().end.offset
     };
@@ -1664,7 +1542,7 @@ InformalParameterList
 
 
 FunctionBody
-  = body:SourceElements? {
+  = body:Statements? {
       return {
         type: "BlockStatement",
         body: optionalList(body),
@@ -1674,7 +1552,7 @@ FunctionBody
     }
 
 EnumDeclaration
-  = EnumToken __ id:Identifier __ "{" __ head:Identifier tail:( __ "," __ Identifier)* __ "}" __ EOS
+  = EnumToken __ id:Identifier __ "{" __ head:Identifier tail:( __ "," __ Identifier)* __ "}"
   {
     return {
       type: "EnumDeclaration",
@@ -1735,12 +1613,14 @@ SourceElements
     }
 
 SourceElement
-  = Statement
+  = AssignmentExpression __ EOS
+  / DeclarativeExpression __ EOS
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration
   / ModifierDeclaration
   / FunctionDeclaration
+  / UsingStatement
 
 /* ----- A.6 Universal Resource Identifier Character Classes ----- */
 
