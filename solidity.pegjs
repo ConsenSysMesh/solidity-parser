@@ -1572,14 +1572,14 @@ ModifierDeclaration
     }
 
 FunctionDeclaration
-  = FunctionToken __ fnname:FunctionName __ names:ModifierNameList? __
+  = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __
     body:("{" __ FunctionBody __ "}")? (__ EOS)?  // Remove EmptyStatement if no body
     {
       return {
         type: "FunctionDeclaration",
         name: fnname.name,
         params: fnname.params,
-        modifiers: names,
+        modifiers: args,
         body: body != null ? body[2] : null,
         is_abstract: body == null,
         start: location().start.offset,
@@ -1611,6 +1611,18 @@ ModifierName
     };
   }
 
+ModifierArgument
+  = id:Identifier __ params:("(" __ ArgumentList? __ ")")?
+  {
+    return {
+      type: "ModifierArgument",
+      name: id != null ? id.name : null,
+      params: params != null ? params[2] : [],
+      start: location().start.offset,
+      end: location().end.offset
+    };
+  }
+
 FunctionNameList
   = head:FunctionName tail:( __ FunctionName)* {
       return buildList(head, tail, 1);
@@ -1618,6 +1630,11 @@ FunctionNameList
 
 ModifierNameList
   = head:ModifierName tail:( __ ModifierName)* {
+      return buildList(head, tail, 1);
+    }
+
+ModifierArgumentList
+  = head:ModifierArgument tail:( __ ModifierArgument)* {
       return buildList(head, tail, 1);
     }
 

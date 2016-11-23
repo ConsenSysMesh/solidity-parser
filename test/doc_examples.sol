@@ -264,3 +264,8 @@ contract NewStuff {
     string a = hex"ab1248fe";
   }
 }
+
+// modifier with expression
+contract MyContract {
+  function fun() mymodifier(foo.bar()) {}
+}
