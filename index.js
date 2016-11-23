@@ -12,7 +12,7 @@ module.exports = {
   getParser: function(parser_name, rebuild) {
     if (rebuild == true) {
       var parserfile = fs.readFileSync(path.resolve("./" + parser_name + ".pegjs"), {encoding: "utf8"});
-      return PEG.buildParser(parserfile);
+      return PEG.generate(parserfile);
     } else {
       return builtParsers[parser_name];
     }
