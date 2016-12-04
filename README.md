@@ -1,3 +1,7 @@
+[![npm](https://img.shields.io/npm/v/solidity-parser.svg)]()
+[![npm](https://img.shields.io/npm/dm/solidity-parser.svg)]()
+[![Build Status](https://travis-ci.org/ConsenSys/solidity-parser.svg?branch=master)](https://travis-ci.org/ConsenSys/solidity-parser)
+
 # Solidity Parser
 
 A Solidity parser in Javascript. So we can evaluate and alter Solidity code without resorting to cruddy preprocessing.  
