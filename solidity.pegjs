@@ -1058,7 +1058,6 @@ Statement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
-  / LabelledStatement
   / ThrowStatement
   / DebuggerStatement
   / UsingStatement
@@ -1367,11 +1366,6 @@ ReturnStatement
     }
   / ReturnToken _ argument:Expression EOS {
       return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
-    }
-
-LabelledStatement
-  = label:Identifier __ ":" __ body:Statement {
-      return { type: "LabeledStatement", label: label, body: body, start: location().start.offset, end: location().end.offset };
     }
 
 ThrowStatement
