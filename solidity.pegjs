@@ -1057,6 +1057,7 @@ Statement
   = Block
   / VariableStatement
   / EmptyStatement
+  / PlaceholderStatement
   / ExpressionStatement
   / IfStatement
   / IterationStatement
@@ -1340,6 +1341,15 @@ IterationStatement
         end: location().end.offset
       };
     }
+
+PlaceholderStatement
+  = "_" __ EOS {
+    return {
+      type: "PlaceholderStatement",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 ContinueStatement
   = ContinueToken EOS {
