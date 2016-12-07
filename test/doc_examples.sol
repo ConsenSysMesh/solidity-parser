@@ -187,7 +187,7 @@ contract DualIndex {
   mapping(uint => mapping(uint => uint)) data;
   address public admin;
 
-  modifier restricted { if (msg.sender == admin) _ }
+  modifier restricted { if (msg.sender == admin) _; }
 
   function DualIndex() {
     admin = msg.sender;
@@ -233,7 +233,7 @@ contract FromSolparse is A, B, TestPrivate, TestInternal {
   function() {
     uint a = 6 ** 9;
     var (x) = 100;
-    uint y = 2 days
+    uint y = 2 days;
   }
 }
 

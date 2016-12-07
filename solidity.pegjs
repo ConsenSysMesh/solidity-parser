@@ -532,13 +532,7 @@ __
 _
   = (WhiteSpace / MultiLineCommentNoLineTerminator)*
 
-/* Automatic Semicolon Insertion */
-
-EOS
-  = __ ";"
-  / _ SingleLineComment? LineTerminatorSequence
-  / _ &"}"
-  / __ EOF
+EOS = __ ";"
 
 EOF
   = !.
