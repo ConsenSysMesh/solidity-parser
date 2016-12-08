@@ -1691,11 +1691,3 @@ FunctionalAssemblyExpression
       end: location().end.offset
     }
   }
-
-/* ----- A.6 Universal Resource Identifier Character Classes ----- */
-
-/* Irrelevant. */
-
-/* ----- A.8 JSON ----- */
-
-/* Irrelevant. */
