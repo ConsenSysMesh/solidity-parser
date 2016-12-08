@@ -1055,6 +1055,7 @@ Statement
   / ExpressionStatement
   / IfStatement
   / IterationStatement
+  / InlineAssemblyStatement
   / ContinueStatement
   / BreakStatement
   / ReturnStatement
@@ -1334,6 +1335,16 @@ IterationStatement
         end: location().end.offset
       };
     }
+
+InlineAssemblyStatement
+  = 'assembly' __ body:InlineAssemblyBlock {
+      return {
+        type: "InlineAssemblyStatement",
+        body:  body,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+  }
 
 PlaceholderStatement
   = "_" __ EOS {
@@ -1619,6 +1630,67 @@ SourceElement
   / ModifierDeclaration
   / FunctionDeclaration
   / UsingStatement
+
+InlineAssemblyBlock
+  = '{' __ items:(AssemblyItem __)* __ '}' {
+    return {
+      type: "InlineAssemblyBlock",
+      items: optionalList(extractList(items, 0)),
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+AssemblyItem
+  = FunctionalAssemblyExpression
+  / InlineAssemblyBlock
+  / AssemblyLocalBinding
+  / AssemblyAssignment
+  / NumericLiteral
+  / StringLiteral
+  / HexStringLiteral
+  / Identifier
+
+AssemblyLocalBinding
+  = 'let' __ name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+    return {
+      type: "AssemblyLocalBinding",
+      name: name,
+      expression: expression,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+AssemblyAssignment
+  = name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+    return {
+      type: "AssemblyAssignment",
+      name: name,
+      expression: expression,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / '=:' __ name:Identifier {
+    return {
+      type: "AssemblyAssignment",
+      name: name,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+FunctionalAssemblyExpression
+  = name:Identifier __ '(' __ head:AssemblyItem? __ tail:( ',' __ AssemblyItem )* __ ')' {
+    return {
+      type: "FunctionalAssemblyExpression",
+      name: name,
+      arguments: buildList(head, tail, 2),
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 /* ----- A.6 Universal Resource Identifier Character Classes ----- */
 
