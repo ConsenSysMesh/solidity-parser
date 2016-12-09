@@ -854,9 +854,7 @@ EqualityExpressionNoIn
     { return buildBinaryExpression(head, tail); }
 
 EqualityOperator
-  = "==="
-  / "!=="
-  / "=="
+  = "=="
   / "!="
 
 BitwiseANDExpression
