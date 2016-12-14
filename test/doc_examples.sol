@@ -249,6 +249,11 @@ contract CommentedOutFunction {
   // }
 }
 
+library VarHasBrackets {
+	string constant specialRight = "}";
+	string storage specialLeft = "{";
+}
+
 library UsingExampleLibrary {
   function sum(uint[] storage self) returns (uint s) {
     for (uint i = 0; i < self.length; i++)

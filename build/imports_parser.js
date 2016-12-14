@@ -3996,7 +3996,10 @@ function peg$parse(input, options) {
           if (s5 === peg$FAILED) {
             s5 = peg$parseBlockList();
             if (s5 === peg$FAILED) {
-              s5 = peg$parseNonClosingBracketCharacter();
+              s5 = peg$parseStringLiteral();
+              if (s5 === peg$FAILED) {
+                s5 = peg$parseNonClosingBracketCharacter();
+              }
             }
           }
           while (s5 !== peg$FAILED) {
@@ -4005,7 +4008,10 @@ function peg$parse(input, options) {
             if (s5 === peg$FAILED) {
               s5 = peg$parseBlockList();
               if (s5 === peg$FAILED) {
-                s5 = peg$parseNonClosingBracketCharacter();
+                s5 = peg$parseStringLiteral();
+                if (s5 === peg$FAILED) {
+                  s5 = peg$parseNonClosingBracketCharacter();
+                }
               }
             }
           }
