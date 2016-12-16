@@ -300,3 +300,16 @@ library GetCode {
 contract usesConst {
   uint const = 0;
 }
+
+contract memoryArrays {
+  uint seven = 7;
+
+  function returnNumber(uint number) returns (uint){
+    return number;
+  }
+
+  function alloc() {
+    uint[] memory a = new uint[](7);
+    uint[] memory b = new uint[](returnNumber(seven));
+  }
+}

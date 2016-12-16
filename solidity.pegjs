@@ -625,7 +625,7 @@ MemberExpression
         }
     )
     tail:(
-        __ "[" __ property:Expression __ "]" {
+        __ "[" __ property:Expression? __ "]" {
           return { property: property, computed: true, start: location().start.offset, end: location().end.offset };
         }
       / __ "." __ property:IdentifierName {
