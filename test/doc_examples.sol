@@ -313,3 +313,11 @@ contract memoryArrays {
     uint[] memory b = new uint[](returnNumber(seven));
   }
 }
+
+contract declarativeExpressionDescriptors {
+  uint a = 0;
+  uint constant internal b = 0;
+  uint internal constant c = 0;
+  uint constant constant constant d = 0;
+  uint constant public private internal storage memory e = 0;
+}
