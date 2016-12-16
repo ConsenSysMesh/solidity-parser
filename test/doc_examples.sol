@@ -296,3 +296,16 @@ library GetCode {
         }
     }
 }
+
+contract memoryArrays {
+  uint seven = 7;
+
+  function returnNumber(uint number) returns (uint){
+    return number;
+  }
+
+  function alloc() {
+    uint[] memory a = new uint[](7);
+    uint[] memory b = new uint[](returnNumber(seven));
+  }
+}
