@@ -296,3 +296,7 @@ library GetCode {
         }
     }
 }
+
+contract usesConst {
+  uint const = 0;
+}
