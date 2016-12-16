@@ -233,7 +233,6 @@ Keyword
 
 FutureReservedWord
   = ClassToken
-  / ConstToken
   / ExportToken
   / ExtendsToken
 
@@ -467,7 +466,6 @@ AnonymousToken  = "anonymous"  !IdentifierPart
 AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
-ConstToken      = "const"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
 ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
