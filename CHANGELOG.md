@@ -1,4 +1,6 @@
-### 0.2.0 (unreleased)
+### 0.3.0 (unreleased)
+
+### 0.2.0
 
  * Fix CLI with file arguments
  * Fix parsing of array constructors
