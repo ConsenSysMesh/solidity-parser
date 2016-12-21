@@ -213,7 +213,6 @@ Keyword
   = BreakToken
   / ContinueToken
   / ContractToken
-  / DebuggerToken
   / DeleteToken
   / DoToken
   / ElseToken
@@ -469,7 +468,6 @@ ConstantToken   = "constant"   !IdentifierPart
 ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
 DaysToken       = "days"       !IdentifierPart
-DebuggerToken   = "debugger"   !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
 DoToken         = "do"         !IdentifierPart
 ElseToken       = "else"       !IdentifierPart
@@ -960,7 +958,6 @@ Statement
   / BreakStatement
   / ReturnStatement
   / ThrowStatement
-  / DebuggerStatement
   / UsingStatement
 
 Block
@@ -1227,9 +1224,6 @@ ThrowStatement
   = ThrowToken EOS {
       return { type: "ThrowStatement", start: location().start.offset, end: location().end.offset };
     }
-
-DebuggerStatement
-  = DebuggerToken EOS { return { type: "DebuggerStatement", start: location().start.offset, end: location().end.offset }; }
 
 ContractStatement
   = ContractToken __ id:Identifier __ is:IsStatement? __
