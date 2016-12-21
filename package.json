@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
-    "test": "mocha --timeout 5000 --reporter spec"
+    "test": "mocha --timeout 5000 --reporter spec",
+    "lint": "eslint ."
   },
   "bin": {
     "solidity-parser": "./cli.js"

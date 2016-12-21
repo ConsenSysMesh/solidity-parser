@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+
+/* eslint no-console: 0 */
+
 var argv = require("yargs").argv;
 var SolidityParser = require("./index.js");
 
