@@ -681,19 +681,28 @@ Type
     }
   }
 
+DeclarativeExpressionDescriptor
+  = ConstantToken
+  / PublicToken
+  / PrivateToken
+  / InternalToken
+  / StorageToken
+  / MemoryToken
+
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ tokens:( __ DeclarativeExpressionDescriptor __ )* __ id:Identifier
   {
+    var descriptors = extractList(extractList(tokens, 1), 0);
     return {
       type: "DeclarativeExpression",
       name: id.name,
       literal: type,
-      is_constant: isconstant != null,
-      is_public: ispublic != null,
-      is_private: isprivate != null,
-      is_internal: isinternal != null,
-      is_storage: isstorage != null,
-      is_memory: ismemory != null,
+      is_constant: descriptors.includes('constant') || false,
+      is_public: descriptors.includes('public') || false,
+      is_private: descriptors.includes('private') || false,
+      is_internal: descriptors.includes('internal') || false,
+      is_storage: descriptors.includes('storage') || false,
+      is_memory: descriptors.includes('memory') || false,
       start: location().start.offset,
       end: location().end.offset
     }
