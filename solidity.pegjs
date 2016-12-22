@@ -206,7 +206,7 @@ UnicodeConnectorPunctuation
 ReservedWord
   = Keyword
   / FutureReservedWord
-  / NullLiteral
+  / NullToken
   / BooleanLiteral
 
 Keyword
@@ -236,16 +236,12 @@ FutureReservedWord
   / ExtendsToken
 
 Literal
-  = NullLiteral
-  / BooleanLiteral
+  = BooleanLiteral
   / DenominationLiteral
   / NumericLiteral
   / HexStringLiteral
   / StringLiteral
   / VersionLiteral
-
-NullLiteral
-  = NullToken { return { type: "Literal", value: null, start: location().start.offset, end: location().end.offset }; }
 
 BooleanLiteral
   = TrueToken  { return { type: "Literal", value: true, start: location().start.offset, end: location().end.offset }; }
