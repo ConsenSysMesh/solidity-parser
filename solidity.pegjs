@@ -175,15 +175,10 @@ IdentifierStart
   = UnicodeLetter
   / "$"
   / "_"
-  / "\\" sequence:UnicodeEscapeSequence { return sequence; }
 
 IdentifierPart
   = IdentifierStart
-  / UnicodeCombiningMark
   / UnicodeDigit
-  / UnicodeConnectorPunctuation
-  / "\u200C"
-  / "\u200D"
 
 UnicodeLetter
   = Lu
