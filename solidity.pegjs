@@ -685,42 +685,48 @@ StorageLocationSpecifier
   = StorageToken
   / MemoryToken
 
+StateVariableSpecifiers
+  = specifiers:(VisibilitySpecifier __ ConstantToken?){
+    return {
+      visibility: specifiers[0][0],
+      isconstant: specifiers[2] ? true: false 
+    }
+  }
+  / specifiers:(ConstantToken __ VisibilitySpecifier?){
+    return {
+      visibility: specifiers[2] ? specifiers[2][0] : null,
+      isconstant: true
+    }
+  }
+
+StateVariableValue 
+  = "=" __ expression:Expression {
+    return expression;
+  }
+
+StateVariableDeclaration
+  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS  
+  {
+    return {
+      type: "StateVariableDeclaration",
+      name: id.name,
+      literal: type,
+      visibility: specifiers? specifiers.visibility : null,
+      is_constant: specifiers? specifiers.isconstant : false,
+      value: value,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
 DeclarativeExpression
-  = type:Type __ storage:(StorageLocationSpecifier)? !(VisibilitySpecifier / ConstantToken) __ id:Identifier 
+  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier 
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
       literal: type, 
-      visibility: null,
-      storage_location: storage? storage[0] : null,
-      is_constant: false,
-      start: location().start.offset,
-      end: location().end.offset
-    }
-  }
-  / type:Type __ specifiers:(VisibilitySpecifier __ ConstantToken?) __ id:Identifier
-  {
-    return {
-      type: "DeclarativeExpression",
-      name: id.name,
-      literal: type,
-      visibility: specifiers ? specifiers[0][0] : null,
-      storage_location: null,
-      is_constant: specifiers && specifiers[2] ? true : false,
-      start: location().start.offset,
-      end: location().end.offset
-    }
-  }
-  / type:Type __ specifiers:(ConstantToken __ VisibilitySpecifier?) __ id:Identifier 
-  {
-    return {
-      type: "DeclarativeExpression",
-      name: id.name,
-      literal: type,
-      visibility: specifiers && specifiers[2] ? specifiers[2][0] : null,
-      storage_location: null,
-      is_constant: true,
+      storage_location: storage ? storage[0]: null,
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1456,18 +1462,7 @@ SourceElements
     }
 
 SourceElement
-  = exp:AssignmentExpression  __ EOS &{
-      return (
-        exp.type === 'AssignmentExpression' && 
-        exp.left.type === 'DeclarativeExpression' && 
-        exp.left.storage_location === null
-      )
-    }{
-      return exp;
-    }
-  / exp:DeclarativeExpression __ EOS {
-      return exp;
-  }
+  = StateVariableDeclaration
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration

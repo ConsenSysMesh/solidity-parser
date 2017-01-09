@@ -317,6 +317,7 @@ contract memoryArrays {
 contract DeclarativeExpressions {
   uint a;
   uint b = 7;
+  uint b2=0;
   uint public c;
   uint constant public d;
   uint public constant e;
@@ -324,6 +325,8 @@ contract DeclarativeExpressions {
   struct S { uint q;}
 
   function ham(S storage s1, uint[] storage arr) internal {
+    uint x;
+    uint y = 7;
     S storage s2 = s1;
     uint[] memory stor;
     uint[] storage stor2 = arr;
