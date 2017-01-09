@@ -676,19 +676,51 @@ Type
     }
   }
 
+VisibilitySpecifier
+  = PublicToken
+  / PrivateToken
+  / InternalToken
+
+StorageLocationSpecifier
+  = StorageToken
+  / MemoryToken
+
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ storage:(StorageLocationSpecifier)? !(VisibilitySpecifier / ConstantToken) __ id:Identifier 
+  {
+    return {
+      type: "DeclarativeExpression",
+      name: id.name,
+      literal: type, 
+      visibility: null,
+      storage_location: storage? storage[0] : null,
+      is_constant: false,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / type:Type __ specifiers:(VisibilitySpecifier __ ConstantToken?) __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
       literal: type,
-      is_constant: isconstant != null,
-      is_public: ispublic != null,
-      is_private: isprivate != null,
-      is_internal: isinternal != null,
-      is_storage: isstorage != null,
-      is_memory: ismemory != null,
+      visibility: specifiers ? specifiers[0][0] : null,
+      storage_location: null,
+      is_constant: specifiers && specifiers[2] ? true : false,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / type:Type __ specifiers:(ConstantToken __ VisibilitySpecifier?) __ id:Identifier 
+  {
+    return {
+      type: "DeclarativeExpression",
+      name: id.name,
+      literal: type,
+      visibility: specifiers && specifiers[2] ? specifiers[2][0] : null,
+      storage_location: null,
+      is_constant: true,
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1424,8 +1456,18 @@ SourceElements
     }
 
 SourceElement
-  = AssignmentExpression __ EOS
-  / DeclarativeExpression __ EOS
+  = exp:AssignmentExpression  __ EOS &{
+      return (
+        exp.type === 'AssignmentExpression' && 
+        exp.left.type === 'DeclarativeExpression' && 
+        exp.left.storage_location === null
+      )
+    }{
+      return exp;
+    }
+  / exp:DeclarativeExpression __ EOS {
+      return exp;
+  }
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration

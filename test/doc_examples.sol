@@ -251,7 +251,7 @@ contract CommentedOutFunction {
 
 library VarHasBrackets {
 	string constant specialRight = "}";
-	string storage specialLeft = "{";
+	//string storage specialLeft = "{";
 }
 
 library UsingExampleLibrary {
@@ -311,5 +311,21 @@ contract memoryArrays {
   function alloc() {
     uint[] memory a = new uint[](7);
     uint[] memory b = new uint[](returnNumber(seven));
+  }
+}
+
+contract DeclarativeExpressions {
+  uint a;
+  uint b = 7;
+  uint public c;
+  uint constant public d;
+  uint public constant e;
+  uint private constant f = 7;
+  struct S { uint q;}
+
+  function ham(S storage s1, uint[] storage arr) internal {
+    S storage s2 = s1;
+    uint[] memory stor;
+    uint[] storage stor2 = arr;
   }
 }
