@@ -676,19 +676,57 @@ Type
     }
   }
 
+VisibilitySpecifier
+  = PublicToken
+  / PrivateToken
+  / InternalToken
+
+StorageLocationSpecifier
+  = StorageToken
+  / MemoryToken
+
+StateVariableSpecifiers
+  = specifiers:(VisibilitySpecifier __ ConstantToken?){
+    return {
+      visibility: specifiers[0][0],
+      isconstant: specifiers[2] ? true: false 
+    }
+  }
+  / specifiers:(ConstantToken __ VisibilitySpecifier?){
+    return {
+      visibility: specifiers[2] ? specifiers[2][0] : null,
+      isconstant: true
+    }
+  }
+
+StateVariableValue 
+  = "=" __ expression:Expression {
+    return expression;
+  }
+
+StateVariableDeclaration
+  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS  
+  {
+    return {
+      type: "StateVariableDeclaration",
+      name: id.name,
+      literal: type,
+      visibility: specifiers? specifiers.visibility : null,
+      is_constant: specifiers? specifiers.isconstant : false,
+      value: value,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
 DeclarativeExpression
-  = type:Type __ isconstant:ConstantToken? __ ispublic:PublicToken? __ isprivate:PrivateToken? __ isinternal:InternalToken? __ isstorage:StorageToken? __ ismemory:MemoryToken? __ id:Identifier
+  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier 
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
-      literal: type,
-      is_constant: isconstant != null,
-      is_public: ispublic != null,
-      is_private: isprivate != null,
-      is_internal: isinternal != null,
-      is_storage: isstorage != null,
-      is_memory: ismemory != null,
+      literal: type, 
+      storage_location: storage ? storage[0]: null,
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1424,8 +1462,7 @@ SourceElements
     }
 
 SourceElement
-  = AssignmentExpression __ EOS
-  / DeclarativeExpression __ EOS
+  = StateVariableDeclaration
   / EnumDeclaration
   / EventDeclaration
   / StructDeclaration
