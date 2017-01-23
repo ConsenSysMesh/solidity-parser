@@ -332,3 +332,14 @@ contract DeclarativeExpressions {
     uint[] storage stor2 = arr;
   }
 }
+
+contract VariableDeclarationTuple {
+  function getMyTuple() returns (bool, bool){
+    return (true, false);
+  }
+  
+  function ham (){
+    var (x, y) = (10, 20);
+    var (a, b) = getMyTuple();
+  }
+}

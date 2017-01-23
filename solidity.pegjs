@@ -984,6 +984,35 @@ VariableStatement
         end: location().end.offset
       };
     }
+    / VarToken __ tuple:VariableDeclarationTuple EOS {
+      return {
+        type:         "VariableDeclarationTuple",
+        declarations: tuple.declarations,
+        init: tuple.init,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+
+VariableDeclarationTuple
+  = "(" head:VariableDeclarationNoInit tail:(__ "," __ VariableDeclarationNoInit)* ")" init:(__ Initialiser) {
+      return {
+        declarations: buildList(head, tail, 3),
+        init: extractOptional(init, 1)
+      }
+    }
+
+VariableDeclarationNoInit
+  = id:Identifier {
+      return {
+        type: "VariableDeclarator",
+        id: id.constructor === Array ? id [1] : id,
+        init: null,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+
 
 VariableDeclarationList
   = head:VariableDeclaration tail:(__ "," __ VariableDeclaration)* {
