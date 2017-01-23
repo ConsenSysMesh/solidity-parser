@@ -333,6 +333,17 @@ contract DeclarativeExpressions {
   }
 }
 
+contract VariableDeclarationTuple {
+  function getMyTuple() returns (bool, bool){
+    return (true, false);
+  }
+  
+  function ham (){
+    var (x, y) = (10, 20);
+    var (a, b) = getMyTuple();
+  }
+}
+
 contract TypeIndexSpacing {
   uint [ 7 ] x;
   uint  []  y;
