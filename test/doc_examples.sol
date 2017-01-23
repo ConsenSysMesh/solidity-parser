@@ -332,3 +332,8 @@ contract DeclarativeExpressions {
     uint[] storage stor2 = arr;
   }
 }
+
+contract TypeIndexSpacing {
+  uint [ 7 ] x;
+  uint  []  y;
+}
