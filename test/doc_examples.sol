@@ -343,3 +343,8 @@ contract VariableDeclarationTuple {
     var (a, b) = getMyTuple();
   }
 }
+
+contract TypeIndexSpacing {
+  uint [ 7 ] x;
+  uint  []  y;
+}
