@@ -1311,8 +1311,7 @@ EventDeclaration
   }
 
 ModifierDeclaration
-  = ModifierToken __ fnname:ModifierName __ names:ModifierNameList? __
-    "{" __ body:FunctionBody __ "}"
+  = ModifierToken __ fnname:ModifierName __ names:ModifierNameList? __ body:FunctionBody
     {
       return {
         type: "ModifierDeclaration",
@@ -1326,20 +1325,33 @@ ModifierDeclaration
     }
 
 FunctionDeclaration
-  = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __
-    body:("{" __ FunctionBody __ "}")? (__ EOS)?  // Remove EmptyStatement if no body
+  = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ body:FunctionBody
     {
       return {
         type: "FunctionDeclaration",
         name: fnname.name,
         params: fnname.params,
         modifiers: args,
-        body: body != null ? body[2] : null,
-        is_abstract: body == null,
+        body: body,
+        is_abstract: false,
         start: location().start.offset,
         end: location().end.offset
       };
     }
+  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ EOS
+    {
+      return {
+        type: "FunctionDeclaration",
+        name: fnname.name,
+        params: fnname.params,
+        modifiers: args,
+        body: null,
+        is_abstract: true,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+    
 
 FunctionName
   = id:Identifier? __ params:("(" __ InformalParameterList? __ ")")
@@ -1420,7 +1432,7 @@ InformalParameterList
 
 
 FunctionBody
-  = body:Statements? {
+  = "{" __ body:Statements? __ "}" {
       return {
         type: "BlockStatement",
         body: optionalList(body),
