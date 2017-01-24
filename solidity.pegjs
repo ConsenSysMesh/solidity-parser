@@ -1311,8 +1311,7 @@ EventDeclaration
   }
 
 ModifierDeclaration
-  = ModifierToken __ fnname:ModifierName __ names:ModifierNameList? __
-     __ body:FunctionBody __
+  = ModifierToken __ fnname:ModifierName __ names:ModifierNameList? __ body:FunctionBody
     {
       return {
         type: "ModifierDeclaration",
