@@ -4,7 +4,7 @@
   "description": "PEG.js Solidity parser for Javascript",
   "main": "index.js",
   "scripts": {
-    "prepare": "npm run build",
+    "prepublish": "npm run build",
     "build": "mkdir -p ./build && pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
     "test": "mocha --timeout 5000 --reporter spec",
     "lint": "eslint ."
