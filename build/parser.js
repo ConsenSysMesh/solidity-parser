@@ -6118,7 +6118,7 @@ function peg$parse(input, options) {
       if (s2 !== peg$FAILED) {
         s3 = peg$parse__();
         if (s3 !== peg$FAILED) {
-          s4 = peg$parseMemberExpression();
+          s4 = peg$parseType();
           if (s4 !== peg$FAILED) {
             s5 = peg$parse__();
             if (s5 !== peg$FAILED) {
@@ -6164,9 +6164,6 @@ function peg$parse(input, options) {
           s6 = peg$parse__();
           if (s6 !== peg$FAILED) {
             s7 = peg$parseExpression();
-            if (s7 === peg$FAILED) {
-              s7 = null;
-            }
             if (s7 !== peg$FAILED) {
               s8 = peg$parse__();
               if (s8 !== peg$FAILED) {
@@ -6257,9 +6254,6 @@ function peg$parse(input, options) {
             s6 = peg$parse__();
             if (s6 !== peg$FAILED) {
               s7 = peg$parseExpression();
-              if (s7 === peg$FAILED) {
-                s7 = null;
-              }
               if (s7 !== peg$FAILED) {
                 s8 = peg$parse__();
                 if (s8 !== peg$FAILED) {

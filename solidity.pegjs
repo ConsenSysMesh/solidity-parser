@@ -580,12 +580,12 @@ Elision
 MemberExpression
   = head:(
         PrimaryExpression
-      / NewToken __ callee:MemberExpression __ args:Arguments {
+      / NewToken __ callee:Type __ args:Arguments {
           return { type: "NewExpression", callee: callee, arguments: args, start: location().start.offset, end: location().end.offset };
         }
     )
     tail:(
-        __ "[" __ property:Expression? __ "]" {
+        __ "[" __ property:Expression __ "]" {
           return { property: property, computed: true, start: location().start.offset, end: location().end.offset };
         }
       / __ "." __ property:IdentifierName {
