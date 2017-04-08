@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "mkdir -p ./build && pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
+    "build": "mkdirp ./build && pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
     "test": "mocha --timeout 5000 --reporter spec",
     "lint": "eslint ."
   },
@@ -18,5 +18,8 @@
     "mocha": "^2.4.5",
     "pegjs": "^0.10.0",
     "yargs": "^4.6.0"
+  },
+  "devDependencies": {
+    "mkdirp": "^0.5.1"
   }
 }
