@@ -1522,7 +1522,7 @@ InlineAssemblyBlock
   }
 
 AssemblyItem
-  = FunctionalAssemblyExpression
+  = FunctionalAssemblyInstruction
   / InlineAssemblyBlock
   / AssemblyLocalBinding
   / AssemblyAssignment
@@ -1531,8 +1531,17 @@ AssemblyItem
   / HexStringLiteral
   / Identifier
 
+AssemblyExpression
+  = FunctionalAssemblyInstruction
+  / ElementaryAssemblyOperation
+
+ElementaryAssemblyOperation
+  = NumericLiteral
+  / StringLiteral
+  / Identifier
+
 AssemblyLocalBinding
-  = 'let' __ name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+  = 'let' __ name:Identifier __ ':=' __ expression:AssemblyExpression {
     return {
       type: "AssemblyLocalBinding",
       name: name,
@@ -1543,7 +1552,7 @@ AssemblyLocalBinding
   }
 
 AssemblyAssignment
-  = name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+  = name:Identifier __ ':=' __ expression:FunctionalAssemblyInstruction {
     return {
       type: "AssemblyAssignment",
       name: name,
@@ -1561,10 +1570,10 @@ AssemblyAssignment
     }
   }
 
-FunctionalAssemblyExpression
+FunctionalAssemblyInstruction
   = name:Identifier __ '(' __ head:AssemblyItem? __ tail:( ',' __ AssemblyItem )* __ ')' {
     return {
-      type: "FunctionalAssemblyExpression",
+      type: "FunctionalAssemblyInstruction",
       name: name,
       arguments: buildList(head, tail, 2),
       start: location().start.offset,
