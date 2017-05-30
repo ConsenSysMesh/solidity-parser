@@ -1277,7 +1277,7 @@ InterfaceStatement
     "{" __ body:SourceElements? __ "}"
   {
     return {
-      type: "ContractStatement",
+      type: "InterfaceStatement",
       name: id.name,
       is: [],
       body: body,
