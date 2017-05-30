@@ -208,6 +208,7 @@ Keyword
   = BreakToken
   / ContinueToken
   / ContractToken
+  / InterfaceToken
   / DeleteToken
   / DoToken
   / ElseToken
@@ -479,6 +480,7 @@ IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
+InterfaceToken  = "interface"  !IdentifierPart
 InternalToken   = "internal"   !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
@@ -1037,7 +1039,7 @@ EmptyStatement
   = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }
 
 ExpressionStatement
-  = !("{" / FunctionToken / ContractToken / LibraryToken / StructToken / EnumToken) expression:Expression EOS {
+  = !("{" / FunctionToken / ContractToken / InterfaceToken / LibraryToken / StructToken / EnumToken) expression:Expression EOS {
       return {
         type:       "ExpressionStatement",
         expression: expression,
@@ -1270,6 +1272,21 @@ ContractStatement
     }
   }
 
+InterfaceStatement
+  = InterfaceToken __ id:Identifier __
+    "{" __ body:SourceElements? __ "}"
+  {
+    return {
+      type: "InterfaceStatement",
+      name: id.name,
+      is: [],
+      body: body,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+
 LibraryStatement
   = LibraryToken __ id:Identifier __ is:IsStatement? __
     "{" __ body:SourceElements? __ "}"
@@ -1495,6 +1512,7 @@ SourceUnit
   = PragmaStatement
   / ImportStatement
   / ContractStatement
+  / InterfaceStatement
   / LibraryStatement
 
 SourceElements
