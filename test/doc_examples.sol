@@ -16,6 +16,10 @@ import "SomeFile.sol" as SomeOtherFile;
 import * as SomeSymbol from "AnotherFile.sol";
 import {symbol1 as alias, symbol2} from "File.sol";
 
+interface i {
+  function f();
+}
+
 contract c {
   function c()
   {
