@@ -356,6 +356,9 @@ contract VariableDeclarationTuple {
   function ham (){
     var (x, y) = (10, 20);
     var (a, b) = getMyTuple();
+    var (,c) = (10, 20);
+    var (d,,) = (10, 20, 30);
+    var (,e,,f,) = (10, 20, 30, 40, 50);
   }
 }
 

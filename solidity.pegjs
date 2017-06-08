@@ -524,6 +524,9 @@ EOS = __ ";"
 EOF
   = !.
 
+Comma
+  = __ "," __
+
 /* ----- A.2 Number Conversions ----- */
 
 /* Irrelevant. */
@@ -997,9 +1000,9 @@ VariableStatement
     }
 
 VariableDeclarationTuple
-  = "(" head:VariableDeclarationNoInit tail:(__ "," __ VariableDeclarationNoInit)* ")" init:(__ Initialiser) {
+  = "(" Comma* head:VariableDeclarationNoInit tail:(Comma+ VariableDeclarationNoInit)* Comma* ")" init:(__ Initialiser) {
       return {
-        declarations: buildList(head, tail, 3),
+        declarations: buildList(head, tail, 1),
         init: extractOptional(init, 1)
       }
     }
