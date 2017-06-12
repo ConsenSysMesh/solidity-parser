@@ -366,3 +366,22 @@ contract TypeIndexSpacing {
   uint [ 7 ] x;
   uint  []  y;
 }
+
+contract Ballot {
+
+    struct Voter {
+        uint weight;
+        bool voted;
+    }
+
+    function abstain() returns (bool) {
+      return false;
+    }
+
+    Voter you = Voter(1, true);
+
+    Voter me = Voter({
+        weight: 2,
+        voted: abstain()
+    });
+}
