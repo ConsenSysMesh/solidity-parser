@@ -384,4 +384,9 @@ contract Ballot {
         weight: 2,
         voted: abstain()
     });
+
+    Voter airbnb = Voter({
+      weight: 2,
+      voted: true,
+    });
 }
