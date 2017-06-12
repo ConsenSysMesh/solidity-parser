@@ -657,10 +657,29 @@ Arguments
   = "(" __ args:(ArgumentList __)? ")" {
       return optionalList(extractOptional(args, 0));
     }
+  / "(" __ "{" __ args:(NameValueList __ )? "}" __ ")" {
+      return optionalList(extractOptional(args, 0));
+    }
 
 ArgumentList
   = head:AssignmentExpression tail:(__ "," __ AssignmentExpression)* {
       return buildList(head, tail, 3);
+    }
+
+NameValueList
+  = head:NameValueAssignment tail:(__ "," __ NameValueAssignment)* {
+      return buildList(head, tail, 3);
+    }
+
+NameValueAssignment
+  = id:Identifier __ ":" __ value:AssignmentExpression __ {
+      return {
+        type: "NameValueAssignment",
+        name: id.name,
+        value: value,
+        start: location().start.offset,
+        end: location().end.offset
+      };
     }
 
 LeftHandSideExpression
