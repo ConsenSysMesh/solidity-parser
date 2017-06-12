@@ -657,7 +657,7 @@ Arguments
   = "(" __ args:(ArgumentList __)? ")" {
       return optionalList(extractOptional(args, 0));
     }
-  / "(" __ "{" __ args:(NameValueList __ )? "}" __ ")" {
+  / "(" __ "{" __ args:(NameValueList (__ ",")? )? __ "}" __ ")" {
       return optionalList(extractOptional(args, 0));
     }
 
