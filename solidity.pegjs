@@ -1019,7 +1019,7 @@ VariableStatement
     }
 
 VariableDeclarationTuple
-  = "(" Comma* head:VariableDeclarationNoInit tail:(Comma+ VariableDeclarationNoInit)* Comma* ")" init:(__ Initialiser) {
+  = "("Comma* __ head:VariableDeclarationNoInit tail:(Comma+ VariableDeclarationNoInit)* __ Comma* ")" init:(__ Initialiser) {
       return {
         declarations: buildList(head, tail, 1),
         init: extractOptional(init, 1)

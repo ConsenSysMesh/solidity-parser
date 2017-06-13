@@ -359,6 +359,11 @@ contract VariableDeclarationTuple {
     var (,c) = (10, 20);
     var (d,,) = (10, 20, 30);
     var (,e,,f,) = (10, 20, 30, 40, 50);
+
+    var (
+      num1, num2,
+      num3, ,num5
+    ) = (10, 20, 30, 40, 50);
   }
 }
 
