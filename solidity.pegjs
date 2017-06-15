@@ -208,6 +208,7 @@ Keyword
   = BreakToken
   / ContinueToken
   / ContractToken
+  / InterfaceToken
   / DeleteToken
   / DoToken
   / ElseToken
@@ -479,6 +480,7 @@ IfToken         = "if"         !IdentifierPart
 IsToken         = "is"         !IdentifierPart
 IndexedToken    = "indexed"    !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
+InterfaceToken  = "interface"  !IdentifierPart
 InternalToken   = "internal"   !IdentifierPart
 LibraryToken    = "library"    !IdentifierPart
 MappingToken    = "mapping"    !IdentifierPart
@@ -521,6 +523,9 @@ EOS = __ ";"
 
 EOF
   = !.
+
+Comma
+  = __ "," __
 
 /* ----- A.2 Number Conversions ----- */
 
@@ -652,10 +657,29 @@ Arguments
   = "(" __ args:(ArgumentList __)? ")" {
       return optionalList(extractOptional(args, 0));
     }
+  / "(" __ "{" __ args:(NameValueList (__ ",")? )? __ "}" __ ")" {
+      return optionalList(extractOptional(args, 0));
+    }
 
 ArgumentList
   = head:AssignmentExpression tail:(__ "," __ AssignmentExpression)* {
       return buildList(head, tail, 3);
+    }
+
+NameValueList
+  = head:NameValueAssignment tail:(__ "," __ NameValueAssignment)* {
+      return buildList(head, tail, 3);
+    }
+
+NameValueAssignment
+  = name:Identifier __ ":" __ value:AssignmentExpression __ {
+      return {
+        type: "NameValueAssignment",
+        name: name,
+        value: value,
+        start: location().start.offset,
+        end: location().end.offset
+      };
     }
 
 LeftHandSideExpression
@@ -995,9 +1019,9 @@ VariableStatement
     }
 
 VariableDeclarationTuple
-  = "(" head:VariableDeclarationNoInit tail:(__ "," __ VariableDeclarationNoInit)* ")" init:(__ Initialiser) {
+  = "("Comma* __ head:VariableDeclarationNoInit tail:(Comma+ VariableDeclarationNoInit)* __ Comma* ")" init:(__ Initialiser) {
       return {
-        declarations: buildList(head, tail, 3),
+        declarations: buildList(head, tail, 1),
         init: extractOptional(init, 1)
       }
     }
@@ -1037,7 +1061,7 @@ EmptyStatement
   = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }
 
 ExpressionStatement
-  = !("{" / FunctionToken / ContractToken / LibraryToken / StructToken / EnumToken) expression:Expression EOS {
+  = !("{" / FunctionToken / ContractToken / InterfaceToken / LibraryToken / StructToken / EnumToken) expression:Expression EOS {
       return {
         type:       "ExpressionStatement",
         expression: expression,
@@ -1270,6 +1294,21 @@ ContractStatement
     }
   }
 
+InterfaceStatement
+  = InterfaceToken __ id:Identifier __
+    "{" __ body:SourceElements? __ "}"
+  {
+    return {
+      type: "InterfaceStatement",
+      name: id.name,
+      is: [],
+      body: body,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+
 LibraryStatement
   = LibraryToken __ id:Identifier __ is:IsStatement? __
     "{" __ body:SourceElements? __ "}"
@@ -1495,6 +1534,7 @@ SourceUnit
   = PragmaStatement
   / ImportStatement
   / ContractStatement
+  / InterfaceStatement
   / LibraryStatement
 
 SourceElements
@@ -1522,7 +1562,7 @@ InlineAssemblyBlock
   }
 
 AssemblyItem
-  = FunctionalAssemblyExpression
+  = FunctionalAssemblyInstruction
   / InlineAssemblyBlock
   / AssemblyLocalBinding
   / AssemblyAssignment
@@ -1531,8 +1571,17 @@ AssemblyItem
   / HexStringLiteral
   / Identifier
 
+AssemblyExpression
+  = FunctionalAssemblyInstruction
+  / ElementaryAssemblyOperation
+
+ElementaryAssemblyOperation
+  = NumericLiteral
+  / StringLiteral
+  / Identifier
+
 AssemblyLocalBinding
-  = 'let' __ name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+  = 'let' __ name:Identifier __ ':=' __ expression:AssemblyExpression {
     return {
       type: "AssemblyLocalBinding",
       name: name,
@@ -1543,7 +1592,7 @@ AssemblyLocalBinding
   }
 
 AssemblyAssignment
-  = name:Identifier __ ':=' __ expression:FunctionalAssemblyExpression {
+  = name:Identifier __ ':=' __ expression:FunctionalAssemblyInstruction {
     return {
       type: "AssemblyAssignment",
       name: name,
@@ -1561,10 +1610,10 @@ AssemblyAssignment
     }
   }
 
-FunctionalAssemblyExpression
+FunctionalAssemblyInstruction
   = name:Identifier __ '(' __ head:AssemblyItem? __ tail:( ',' __ AssemblyItem )* __ ')' {
     return {
-      type: "FunctionalAssemblyExpression",
+      type: "FunctionalAssemblyInstruction",
       name: name,
       arguments: buildList(head, tail, 2),
       start: location().start.offset,

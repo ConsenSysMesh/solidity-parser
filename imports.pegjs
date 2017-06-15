@@ -127,6 +127,7 @@ ContractToken   = "contract"  !IdentifierPart
 FromToken       = "from"      !IdentifierPart
 ForToken        = "for"       !IdentifierPart
 ImportToken     = "import"    !IdentifierPart
+InterfaceToken  = "interface" !IdentifierPart
 IsToken         = "is"        !IdentifierPart
 LibraryToken    = "library"   !IdentifierPart
 MappingToken    = "mapping"   !IdentifierPart
@@ -210,6 +211,7 @@ Statement
   = PragmaStatement
   / ImportStatement
   / ContractStatement
+  / InterfaceStatement
   / LibraryStatement
   / UsingStatement
 
@@ -273,6 +275,13 @@ ContractStatement
   {
     return undefined
   }
+
+InterfaceStatement
+  = InterfaceToken __ id:Identifier __ BlockList
+  {
+    return undefined
+  }
+
 
 LibraryStatement
   = LibraryToken __ id:Identifier __ is:IsStatement? __ BlockList

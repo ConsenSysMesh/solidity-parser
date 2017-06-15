@@ -12,7 +12,26 @@
   "bin": {
     "solidity-parser": "./cli.js"
   },
-  "author": "Tim Coulter <tim@timothyjcoulter.com> (http://timothyjcoulter.com), Raghav Dua <duaraghav8@gmail.com> (http://raghavdua.com)",
+  "contributors": [
+    {
+      "name": "Tim Coulter",
+      "email": "tim@timothyjcoulter.com",
+      "url": "http://timothyjcoulter.com"
+    },
+    {
+      "name": "Raghav Dua",
+      "email": "duaraghav8@gmail.com",
+      "url": "http://raghavdua.com"
+    },
+    {
+      "name": "Federico Bond",
+      "email": "federicobond@gmail.com"
+    },
+    {
+      "name": "Christopher Gewecke",
+      "email": "christophergewecke@gmail.com"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "mocha": "^2.4.5",

@@ -1,4 +1,13 @@
-### 0.3.0 (unreleased)
+### 0.4.0 (unreleased)
+
+ * Build parser on package install
+ * Parse array constructors correctly
+ * Parse named arguments correctly
+ * Parse assembly local bindings correctly
+ * Parse missing values when destructuring tuples correctly
+ * Add support for Solidity interfaces
+
+### 0.3.0
 
  * Improve parsing of visibility and storage specifiers
  * Add separate `StateVariableDeclaration` node type

@@ -16,6 +16,10 @@ import "SomeFile.sol" as SomeOtherFile;
 import * as SomeSymbol from "AnotherFile.sol";
 import {symbol1 as alias, symbol2} from "File.sol";
 
+interface i {
+  function f();
+}
+
 contract c {
   function c()
   {
@@ -297,6 +301,17 @@ library GetCode {
     }
 }
 
+contract assemblyLocalBinding {
+  function test(){
+    assembly {
+      let v := 1
+      let x := 0x00
+      let y := x
+      let z := "hello" 
+    }
+  }
+}
+
 contract usesConst {
   uint const = 0;
 }
@@ -341,10 +356,42 @@ contract VariableDeclarationTuple {
   function ham (){
     var (x, y) = (10, 20);
     var (a, b) = getMyTuple();
+    var (,c) = (10, 20);
+    var (d,,) = (10, 20, 30);
+    var (,e,,f,) = (10, 20, 30, 40, 50);
+
+    var (
+      num1, num2,
+      num3, ,num5
+    ) = (10, 20, 30, 40, 50);
   }
 }
 
 contract TypeIndexSpacing {
   uint [ 7 ] x;
   uint  []  y;
+}
+
+contract Ballot {
+
+    struct Voter {
+        uint weight;
+        bool voted;
+    }
+
+    function abstain() returns (bool) {
+      return false;
+    }
+
+    Voter you = Voter(1, true);
+
+    Voter me = Voter({
+        weight: 2,
+        voted: abstain()
+    });
+
+    Voter airbnb = Voter({
+      weight: 2,
+      voted: true,
+    });
 }
