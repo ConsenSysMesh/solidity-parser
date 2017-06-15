@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "npm run build",
+    "postinstall": "npm run build",
     "build": "mkdirp ./build && pegjs -o ./build/parser.js ./solidity.pegjs && pegjs -o ./build/imports_parser.js ./imports.pegjs",
     "test": "mocha --timeout 5000 --reporter spec",
     "lint": "eslint ."
