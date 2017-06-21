@@ -171,6 +171,9 @@ IdentifierName "identifier"
       };
     }
 
+Interpolation
+  = "{{" __ name:IdentifierName __ "}}" { return name; }
+
 IdentifierStart
   = UnicodeLetter
   / "$"
@@ -659,6 +662,9 @@ Arguments
     }
   / "(" __ "{" __ args:(NameValueList (__ ",")? )? __ "}" __ ")" {
       return optionalList(extractOptional(args, 0));
+    }
+  / "(" __ args:Interpolation __ ")" {
+      return [args];
     }
 
 ArgumentList
