@@ -399,4 +399,5 @@ contract Ballot {
 contract GnosisInterpolations {
     uint constant x = 2;
     EventFactory constant eventFactory = EventFactory({{EventFactory}});
+    address constant marketMaker = {{LMSRMarketMaker}};
 }
