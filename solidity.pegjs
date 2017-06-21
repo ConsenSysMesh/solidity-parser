@@ -692,6 +692,7 @@ LeftHandSideExpression
   = DeclarativeExpression
   / CallExpression
   / NewExpression
+  / Interpolation
 
 Type
   = literal:(Mapping / Identifier) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
