@@ -1617,8 +1617,18 @@ AssemblyAssignment
     }
   }
 
+ReturnOpCode 
+  = 'return' {
+    return {
+      type: "Identifier",
+      name: "return",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
 FunctionalAssemblyInstruction
-  = name:Identifier __ '(' __ head:AssemblyItem? __ tail:( ',' __ AssemblyItem )* __ ')' {
+  = name:(Identifier / ReturnOpCode) __ '(' __ head:AssemblyItem? __ tail:( ',' __ AssemblyItem )* __ ')' {
     return {
       type: "FunctionalAssemblyInstruction",
       name: name,

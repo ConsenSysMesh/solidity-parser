@@ -312,6 +312,19 @@ contract assemblyLocalBinding {
   }
 }
 
+contract assemblyReturn {
+  uint a = 10;
+
+  function get() constant returns(uint) {
+    assembly {
+        mstore(0x40, sload(0))
+        byte(0)
+        address(0)
+        return(0x40,32)
+    }
+  }
+}
+
 contract usesConst {
   uint const = 0;
 }
