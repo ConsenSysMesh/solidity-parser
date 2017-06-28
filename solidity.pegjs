@@ -220,6 +220,7 @@ Keyword
   / NewToken
   / PragmaToken
   / ReturnToken
+  / ReturnsToken
   / ThisToken
   / ThrowToken
   / VarToken
@@ -1364,32 +1365,40 @@ ModifierDeclaration
     }
 
 FunctionDeclaration
-  = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ body:FunctionBody
+  = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ body:FunctionBody
     {
       return {
         type: "FunctionDeclaration",
         name: fnname.name,
         params: fnname.params,
         modifiers: args,
+        returnParams: returns,
         body: body,
         is_abstract: false,
         start: location().start.offset,
         end: location().end.offset
       };
     }
-  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ EOS
+  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ EOS
     {
       return {
         type: "FunctionDeclaration",
         name: fnname.name,
         params: fnname.params,
         modifiers: args,
+        returns: returns,
         body: null,
         is_abstract: true,
         start: location().start.offset,
         end: location().end.offset
       };
     }
+
+ReturnsDeclaration
+  = ReturnsToken __ params:("(" __ InformalParameterList __ ")")
+  {
+    return params != null ? params [2] : null;
+  }
     
 
 FunctionName
