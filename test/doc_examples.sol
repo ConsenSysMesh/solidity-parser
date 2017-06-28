@@ -396,6 +396,9 @@ contract Ballot {
       return false;
     }
 
+    function foobar() payable owner (myPrice) returns (uint[], address myAdd, string[] names) {}
+    function foobar() payable owner (myPrice) returns (uint[], address myAdd, string[] names);
+
     Voter you = Voter(1, true);
 
     Voter me = Voter({
