@@ -1372,7 +1372,7 @@ FunctionDeclaration
         name: fnname.name,
         params: fnname.params,
         modifiers: args,
-        returns: returns,
+        returnParams: returns,
         body: body,
         is_abstract: false,
         start: location().start.offset,
