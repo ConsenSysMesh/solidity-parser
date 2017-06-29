@@ -1386,7 +1386,7 @@ FunctionDeclaration
         name: fnname.name,
         params: fnname.params,
         modifiers: args,
-        returns: returns,
+        returnParams: returns,
         body: null,
         is_abstract: true,
         start: location().start.offset,
