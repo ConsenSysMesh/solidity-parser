@@ -1272,7 +1272,7 @@ ReturnStatement
   = ReturnToken EOS {
       return { type: "ReturnStatement", argument: null, start: location().start.offset, end: location().end.offset };
     }
-  / ReturnToken _ argument:Expression EOS {
+  / ReturnToken __ argument:Expression EOS {
       return { type: "ReturnStatement", argument: argument, start: location().start.offset, end: location().end.offset };
     }
 

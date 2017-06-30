@@ -411,3 +411,10 @@ contract Ballot {
       voted: true,
     });
 }
+
+contract multilineReturn {
+  function a() returns (uint x) {
+    return
+      5;
+  }
+}
