@@ -424,3 +424,21 @@ contract multilineReturn {
       5;
   }
 }
+
+contract tupleAssignmentToMemberExpression {
+  struct Vote {
+    mapping (address => uint) voted;
+  }
+
+  Vote vote;
+  uint t;
+
+  function test(){
+    var x = 1; 
+    var y = 2;
+    var isYay = true; 
+    (,y) = (0,2); 
+    //(,vote.voted[msg.sender]) = (0,1);
+    //(,vote.voted[msg.sender]) = isYay ? (0,1) : (0,2);
+  }
+}

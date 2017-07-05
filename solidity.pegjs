@@ -966,7 +966,7 @@ AssignmentOperator
   / "|="
 
 Expression
-  = head:AssignmentExpression tail:(__ "," __ AssignmentExpression)* {
+  = Comma * __ head:AssignmentExpression tail:(Comma+ AssignmentExpression)* __ Comma* {
       return tail.length > 0
         ? { type: "SequenceExpression", expressions: buildList(head, tail, 3) }
         : head;
@@ -1044,7 +1044,6 @@ VariableDeclarationNoInit
         end: location().end.offset
       };
     }
-
 
 VariableDeclarationList
   = head:VariableDeclaration tail:(__ "," __ VariableDeclaration)* {
