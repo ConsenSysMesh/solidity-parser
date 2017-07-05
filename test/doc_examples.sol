@@ -417,3 +417,10 @@ contract GnosisInterpolations {
     EventFactory constant eventFactory = EventFactory({{EventFactory}});
     address constant marketMaker = {{LMSRMarketMaker}};
 }
+
+contract multilineReturn {
+  function a() returns (uint x) {
+    return
+      5;
+  }
+}
