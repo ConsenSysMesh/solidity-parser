@@ -1282,13 +1282,13 @@ ThrowStatement
     }
 
 ContractStatement
-  = ContractToken __ id:Identifier __ is:IsStatement? __
+  = ContractToken __ id:Identifier __ baseContracts:InheritanceSpecifier? __
     "{" __ body:SourceElements? __ "}"
   {
     return {
       type: "ContractStatement",
       name: id.name,
-      is: is != null ? is.names : [],
+      baseContracts: baseContracts != null ? baseContracts.names : [],
       body: body,
       start: location().start.offset,
       end: location().end.offset
@@ -1311,25 +1311,25 @@ InterfaceStatement
 
 
 LibraryStatement
-  = LibraryToken __ id:Identifier __ is:IsStatement? __
+  = LibraryToken __ id:Identifier __ baseContracts:InheritanceSpecifier? __
     "{" __ body:SourceElements? __ "}"
   {
     return {
       type: "LibraryStatement",
       name: id.name,
-      is: is != null ? is.names : [],
+      baseContracts: baseContracts != null ? baseContracts.names : [],
       body: body,
       start: location().start.offset,
       end: location().end.offset
     }
   }
 
-IsStatement
-  = IsToken __ modifiers:CommaSeparatedModifierNameList
+InheritanceSpecifier
+  = IsToken __ names:CommaSeparatedModifierNameList
   {
     return {
-      type: "IsStatement",
-      names: modifiers,
+      type: "InheritanceSpecifier",
+      names: names,
       start: location().start.offset,
       end: location().end.offset
     }
