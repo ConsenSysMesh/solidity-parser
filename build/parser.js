@@ -959,7 +959,7 @@ function peg$parse(input, options) {
             type: "ContractStatement",
             name: id.name,
             is: is != null ? is.names : [],
-            body: body,
+            body: optionalList(body),
             start: location().start.offset,
             end: location().end.offset
           }
@@ -969,7 +969,7 @@ function peg$parse(input, options) {
             type: "InterfaceStatement",
             name: id.name,
             is: [],
-            body: body,
+            body: optionalList(body),
             start: location().start.offset,
             end: location().end.offset
           }
@@ -979,7 +979,7 @@ function peg$parse(input, options) {
             type: "LibraryStatement",
             name: id.name,
             is: is != null ? is.names : [],
-            body: body,
+            body: optionalList(body),
             start: location().start.offset,
             end: location().end.offset
           }
