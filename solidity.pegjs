@@ -1295,7 +1295,7 @@ ContractStatement
       type: "ContractStatement",
       name: id.name,
       is: is != null ? is.names : [],
-      body: body,
+      body: optionalList(body),
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1309,7 +1309,7 @@ InterfaceStatement
       type: "InterfaceStatement",
       name: id.name,
       is: [],
-      body: body,
+      body: optionalList(body),
       start: location().start.offset,
       end: location().end.offset
     }
@@ -1324,7 +1324,7 @@ LibraryStatement
       type: "LibraryStatement",
       name: id.name,
       is: is != null ? is.names : [],
-      body: body,
+      body: optionalList(body),
       start: location().start.offset,
       end: location().end.offset
     }
