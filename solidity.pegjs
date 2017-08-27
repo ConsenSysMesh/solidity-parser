@@ -1581,10 +1581,16 @@ AssemblyItem
   / InlineAssemblyBlock
   / AssemblyLocalBinding
   / AssemblyAssignment
-  / NumericLiteral
+  / AssemblySwitch
+  / AssemblyFunctionDefinition
+  / AssemblyFor
+  / AssemblyLiteral
+  / Identifier
+
+AssemblyLiteral
+  = NumericLiteral
   / StringLiteral
   / HexStringLiteral
-  / Identifier
 
 AssemblyExpression
   = FunctionalAssemblyInstruction
@@ -1607,7 +1613,7 @@ AssemblyLocalBinding
   }
 
 AssemblyAssignment
-  = name:Identifier __ ':=' __ expression:FunctionalAssemblyInstruction {
+  = name:Identifier __ ':=' __ expression:AssemblyExpression {
     return {
       type: "AssemblyAssignment",
       name: name,
@@ -1624,6 +1630,23 @@ AssemblyAssignment
       end: location().end.offset
     }
   }
+
+AssemblyIdentifierList
+  = Identifier ( ',' Identifier )* 
+
+AssemblyCase
+  = __ 'case' __ AssemblyLiteral __ ':' InlineAssemblyBlock 
+
+AssemblySwitch
+  = __ 'switch' __ AssemblyExpression __ AssemblyCase* __ ( 'default' ':' InlineAssemblyBlock )? 
+
+
+AssemblyFunctionDefinition
+  = 'function' __ Identifier __ '(' AssemblyIdentifierList? ')' __ ( '->'  AssemblyIdentifierList )? __ InlineAssemblyBlock
+
+AssemblyFor
+  = 'for' __ ( InlineAssemblyBlock / AssemblyExpression ) 
+     __ AssemblyExpression __ ( InlineAssemblyBlock / AssemblyExpression ) __ InlineAssemblyBlock
 
 ReturnOpCode 
   = 'return' {
