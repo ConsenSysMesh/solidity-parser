@@ -470,6 +470,7 @@ ElseToken       = "else"       !IdentifierPart
 EnumToken       = "enum"       !IdentifierPart
 EtherToken      = "ether"      !IdentifierPart
 EventToken      = "event"      !IdentifierPart
+ExperimentalToken  = "experimental" !IdentifierPart
 ExportToken     = "export"     !IdentifierPart
 ExtendsToken    = "extends"    !IdentifierPart
 FalseToken      = "false"      !IdentifierPart
@@ -721,7 +722,7 @@ StateVariableSpecifiers
   = specifiers:(VisibilitySpecifier __ ConstantToken?){
     return {
       visibility: specifiers[0][0],
-      isconstant: specifiers[2] ? true: false 
+      isconstant: specifiers[2] ? true: false
     }
   }
   / specifiers:(ConstantToken __ VisibilitySpecifier?){
@@ -731,13 +732,13 @@ StateVariableSpecifiers
     }
   }
 
-StateVariableValue 
+StateVariableValue
   = "=" __ expression:Expression {
     return expression;
   }
 
 StateVariableDeclaration
-  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS  
+  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS
   {
     return {
       type: "StateVariableDeclaration",
@@ -752,12 +753,12 @@ StateVariableDeclaration
   }
 
 DeclarativeExpression
-  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier 
+  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
-      literal: type, 
+      literal: type,
       storage_location: storage ? storage[0]: null,
       start: location().start.offset,
       end: location().end.offset
@@ -1114,6 +1115,15 @@ PragmaStatement
       end: location().end.offset
     }
   }
+  / PragmaToken __ ExperimentalToken __ end_version:StringLiteral __ EOS {
+    return {
+      type: "PragmaStatement",
+      start_version: "experimental",
+      end_version: end_version,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 ImportStatement
   = ImportToken __ from:StringLiteral __ alias:(AsToken __ Identifier)? __ EOS
@@ -1405,7 +1415,7 @@ ReturnsDeclaration
   {
     return params != null ? params [2] : null;
   }
-    
+
 
 FunctionName
   = id:Identifier? __ params:("(" __ InformalParameterList? __ ")")
@@ -1633,23 +1643,23 @@ AssemblyAssignment
   }
 
 AssemblyIdentifierList
-  = Identifier ( ',' Identifier )* 
+  = Identifier ( ',' Identifier )*
 
 AssemblyCase
-  = __ 'case' __ AssemblyLiteral __ ':' InlineAssemblyBlock 
+  = __ 'case' __ AssemblyLiteral __ ':' InlineAssemblyBlock
 
 AssemblySwitch
-  = __ 'switch' __ AssemblyExpression __ AssemblyCase* __ ( 'default' ':' InlineAssemblyBlock )? 
+  = __ 'switch' __ AssemblyExpression __ AssemblyCase* __ ( 'default' ':' InlineAssemblyBlock )?
 
 
 AssemblyFunctionDefinition
   = 'function' __ Identifier __ '(' AssemblyIdentifierList? ')' __ ( '->'  AssemblyIdentifierList )? __ InlineAssemblyBlock
 
 AssemblyFor
-  = 'for' __ ( InlineAssemblyBlock / AssemblyExpression ) 
+  = 'for' __ ( InlineAssemblyBlock / AssemblyExpression )
      __ AssemblyExpression __ ( InlineAssemblyBlock / AssemblyExpression ) __ InlineAssemblyBlock
 
-ReturnOpCode 
+ReturnOpCode
   = 'return' {
     return {
       type: "Identifier",
@@ -1669,7 +1679,7 @@ FunctionalAssemblyInstruction
       end: location().end.offset
     }
   }
-  
+
 AssemblyLabel
   = name:(Identifier) __ ':' {
     return {

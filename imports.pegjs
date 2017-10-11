@@ -124,6 +124,7 @@ HexDigit
 
 AsToken         = "as"        !IdentifierPart
 ContractToken   = "contract"  !IdentifierPart
+ExperimentalToken = "experimental" !IdentifierPart
 FromToken       = "from"      !IdentifierPart
 ForToken        = "for"       !IdentifierPart
 ImportToken     = "import"    !IdentifierPart
@@ -219,6 +220,15 @@ PragmaStatement
   = PragmaToken __ SolidityToken __ ([^;]+) EOS {
     return {
       type: "PragmaStatement",
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / PragmaToken __ ExperimentalToken __ end_version:StringLiteral __ EOS {
+    return {
+      type: "PragmaStatement",
+      start_version: "experimental",
+      end_version: end_version,
       start: location().start.offset,
       end: location().end.offset
     }
