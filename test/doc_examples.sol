@@ -10,6 +10,7 @@ pragma solidity < 0.4.0;
 pragma solidity > 0.4.0;
 pragma solidity != 0.4.0;
 pragma solidity >=0.4.0 <0.4.8; // from https://github.com/ethereum/solidity/releases/tag/v0.4.0
+pragma experimental "v0.5.0";
 
 import "SomeFile.sol";
 import "SomeFile.sol" as SomeOtherFile;
@@ -307,7 +308,7 @@ contract assemblyLocalBinding {
       let v := 1
       let x := 0x00
       let y := x
-      let z := "hello" 
+      let z := "hello"
     }
   }
 }
@@ -365,7 +366,7 @@ contract VariableDeclarationTuple {
   function getMyTuple() returns (bool, bool){
     return (true, false);
   }
-  
+
   function ham (){
     var (x, y) = (10, 20);
     var (a, b) = getMyTuple();
@@ -434,10 +435,10 @@ contract tupleAssignmentToMemberExpression {
   uint t;
 
   function test(){
-    var x = 1; 
+    var x = 1;
     var y = 2;
-    var isYay = true; 
-    (,y) = (0,2); 
+    var isYay = true;
+    (,y) = (0,2);
     //(,vote.voted[msg.sender]) = (0,1);
     //(,vote.voted[msg.sender]) = isYay ? (0,1) : (0,2);
   }
