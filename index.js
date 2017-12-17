@@ -4,7 +4,8 @@ var path = require("path");
 
 var builtParsers = {
   "solidity": require("./build/parser"),
-  "imports": require("./build/imports_parser")
+  "imports": require("./build/imports_parser"),
+  "solidity-expression": require("./build/expression_parser")
 };
 
 // TODO: Make all this async.
