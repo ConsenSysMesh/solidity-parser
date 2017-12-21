@@ -764,7 +764,6 @@ DeclarativeExpression
       end: location().end.offset
     }
   }
-  / FunctionDeclaration
 
 Mapping
   = MappingToken __ "(" __ from:Type __ "=>" __ to:Type __ ")"
@@ -1410,7 +1409,7 @@ FunctionDeclaration
         end: location().end.offset
       };
     }
-  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ IdentifierName?
+  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ IdentifierName? __ EOS
     {
       return {
         type: "FunctionDeclaration",
@@ -1545,7 +1544,7 @@ StructDeclaration
   }
 
 DeclarativeExpressionList
-  = head:DeclarativeExpression __ EOS tail:( __ DeclarativeExpression __ EOS )*
+  = head:(DeclarativeExpression __ EOS / FunctionDeclaration __) tail:( __ DeclarativeExpression __ EOS / FunctionDeclaration )*
   {
     return {
       type: "DeclarativeExpressionList",

@@ -447,6 +447,7 @@ contract tupleAssignmentToMemberExpression {
 contract structWithFunctionDefinition {
   struct Fn {
     function(bytes32) internal constant returns(bool) startConditions;
+    function(bytes32) internal constant endConditions;
   }
 }
 
