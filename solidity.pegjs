@@ -764,6 +764,7 @@ DeclarativeExpression
       end: location().end.offset
     }
   }
+  / FunctionDeclaration
 
 Mapping
   = MappingToken __ "(" __ from:Type __ "=>" __ to:Type __ ")"
@@ -1396,6 +1397,20 @@ FunctionDeclaration
       };
     }
   / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ EOS
+    {
+      return {
+        type: "FunctionDeclaration",
+        name: fnname.name,
+        params: fnname.params,
+        modifiers: args,
+        returnParams: returns,
+        body: null,
+        is_abstract: true,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ IdentifierName?
     {
       return {
         type: "FunctionDeclaration",

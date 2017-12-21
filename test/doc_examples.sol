@@ -444,6 +444,12 @@ contract tupleAssignmentToMemberExpression {
   }
 }
 
+contract structWithFunctionDefinition {
+  struct Fn {
+    function(bytes32) internal constant returns(bool) startConditions;
+  }
+}
+
 library Array256Lib {
   function sumElements(uint256[] storage self) constant returns(uint256 sum) {
     assembly {
