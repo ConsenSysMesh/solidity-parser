@@ -1544,7 +1544,7 @@ StructDeclaration
   }
 
 DeclarativeExpressionList
-  = head:(DeclarativeExpression __ EOS / FunctionDeclaration __) tail:( __ DeclarativeExpression __ EOS / FunctionDeclaration )*
+  = head:(DeclarativeExpression __ EOS / FunctionDeclaration __) tail:( __ DeclarativeExpression __ EOS / __ FunctionDeclaration )*
   {
     return {
       type: "DeclarativeExpressionList",
