@@ -452,6 +452,16 @@ contract structWithFunctionDefinition {
   }
 }
 
+contract functionThatReceivesAFunction{
+  function fn(function() returns(bool) condition);
+  function fn(function() returns(bool) condition);
+  function fn(function() internal view returns(bool));
+  function fn(function() internal pure returns(bool));
+  function fn(function() internal view returns(bool) v);
+  function fn(function() internal pure returns(bool) p);
+
+}
+
 library Array256Lib {
   function sumElements(uint256[] storage self) constant returns(uint256 sum) {
     assembly {

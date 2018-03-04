@@ -497,6 +497,7 @@ NullToken       = "null"       !IdentifierPart
 PrivateToken    = "private"    !IdentifierPart
 PragmaToken     = "pragma"     !IdentifierPart
 PublicToken     = "public"     !IdentifierPart
+PureToken       = "pure"       !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
 ReturnsToken    = "returns"    !IdentifierPart
 SecondsToken    = "seconds"    !IdentifierPart
@@ -511,6 +512,7 @@ ThrowToken      = "throw"      !IdentifierPart
 TrueToken       = "true"       !IdentifierPart
 UsingToken      = "using"      !IdentifierPart
 VarToken        = "var"        !IdentifierPart
+ViewToken       = "view"       !IdentifierPart
 WeeksToken      = "weeks"      !IdentifierPart
 WeiToken        = "wei"        !IdentifierPart
 WhileToken      = "while"      !IdentifierPart
@@ -697,7 +699,7 @@ LeftHandSideExpression
   / Interpolation
 
 Type
-  = literal:(Mapping / Identifier) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
+  = literal:(Mapping / Identifier / FunctionToken __ FunctionName __ ModifierArgumentList? __ ReturnsDeclaration? __ IdentifierName?) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
   {
     return {
       type: "Type",
@@ -1423,6 +1425,7 @@ FunctionDeclaration
         end: location().end.offset
       };
     }
+
 
 ReturnsDeclaration
   = ReturnsToken __ params:("(" __ InformalParameterList __ ")")
