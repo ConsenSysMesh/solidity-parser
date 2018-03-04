@@ -453,7 +453,7 @@ contract structWithFunctionDefinition {
 }
 
 contract functionThatReceivesAFunction{
-  function fn(function() returns(bool) condition);
+  function fn(function() returns(bool));
   function fn(function() returns(bool) condition);
   function fn(function() internal view returns(bool));
   function fn(function() internal pure returns(bool));
