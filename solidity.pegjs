@@ -697,7 +697,7 @@ LeftHandSideExpression
   / Interpolation
 
 Type
-  = literal:(Mapping / Identifier) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
+  = literal:(Mapping / Identifier / FunctionToken __ FunctionName __ ModifierArgumentList? __ ReturnsDeclaration? __ IdentifierName?) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
   {
     return {
       type: "Type",
@@ -1423,6 +1423,7 @@ FunctionDeclaration
         end: location().end.offset
       };
     }
+
 
 ReturnsDeclaration
   = ReturnsToken __ params:("(" __ InformalParameterList __ ")")
