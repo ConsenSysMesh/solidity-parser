@@ -4,7 +4,8 @@ var path = require("path");
 
 var builtParsers = {
   "solidity": require("./build/parser"),
-  "imports": require("./build/imports_parser")
+  "imports": require("./build/imports_parser"),
+  "solidity-expression": require("./build/expression_parser")
 };
 
 // TODO: Make all this async.
@@ -27,7 +28,7 @@ module.exports = {
       parser_name = "solidity";
     }
 
-    var parser = this.getParser(parser_name, rebuild);
+    var parser = module.exports.getParser(parser_name, rebuild);
 
     var result;
     try {
@@ -42,6 +43,6 @@ module.exports = {
     return result;
   },
   parseFile: function(file, parser_name, rebuild) {
-    return this.parse(fs.readFileSync(path.resolve(file), {encoding: "utf8"}), parser_name, rebuild);
+    return module.exports.parse(fs.readFileSync(path.resolve(file), {encoding: "utf8"}), parser_name, rebuild);
   }
 };
