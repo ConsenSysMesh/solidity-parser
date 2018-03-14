@@ -203,7 +203,6 @@ UnicodeConnectorPunctuation
 
 ReservedWord
   = Keyword
-  / FutureReservedWord
   / NullToken
   / BooleanLiteral
 

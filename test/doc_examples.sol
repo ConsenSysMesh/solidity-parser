@@ -461,6 +461,10 @@ contract functionThatReceivesAFunction {
   function fn(function() internal pure returns(bool) p);
 }
 
+contract usesFutureReservedWork {
+  uint class;
+}
+
 library Array256Lib {
   function sumElements(uint256[] storage self) constant returns(uint256 sum) {
     assembly {

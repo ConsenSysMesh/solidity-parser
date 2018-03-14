@@ -2029,12 +2029,9 @@ function peg$parse(input, options) {
 
     s0 = peg$parseKeyword();
     if (s0 === peg$FAILED) {
-      s0 = peg$parseFutureReservedWord();
+      s0 = peg$parseNullToken();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseNullToken();
-        if (s0 === peg$FAILED) {
-          s0 = peg$parseBooleanLiteral();
-        }
+        s0 = peg$parseBooleanLiteral();
       }
     }
 
