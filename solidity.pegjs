@@ -466,6 +466,7 @@ DaysToken       = "days"       !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
 DoToken         = "do"         !IdentifierPart
 ElseToken       = "else"       !IdentifierPart
+EmitToken       = "emit"       !IdentifierPart
 EnumToken       = "enum"       !IdentifierPart
 EtherToken      = "ether"      !IdentifierPart
 EventToken      = "event"      !IdentifierPart
@@ -982,6 +983,7 @@ Statements
 Statement
   = Block
   / VariableStatement
+  / EmitStatement
   / EmptyStatement
   / PlaceholderStatement
   / ExpressionStatement
@@ -1063,6 +1065,9 @@ VariableDeclaration
 
 Initialiser
   = "=" !"=" __ expression:AssignmentExpression { return expression; }
+
+EmitStatement
+  = EmitToken __ expression:CallExpression { return expression; }
 
 EmptyStatement
   = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }

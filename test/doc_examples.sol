@@ -465,6 +465,13 @@ contract usesFutureReservedWork {
   uint class;
 }
 
+contract eventEmit {
+  event Received(uint x);
+  function emit(uint x) {
+    emit Received(x);
+  }
+}
+
 library Array256Lib {
   function sumElements(uint256[] storage self) constant returns(uint256 sum) {
     assembly {
