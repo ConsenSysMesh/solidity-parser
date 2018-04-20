@@ -208,6 +208,7 @@ ReservedWord
 
 Keyword
   = BreakToken
+  / ConstructorToken
   / ContinueToken
   / ContractToken
   / InterfaceToken
@@ -460,6 +461,7 @@ AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
+ConstructorToken = "constructor" !IdentifierPart
 ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
 DaysToken       = "days"       !IdentifierPart
@@ -1393,6 +1395,20 @@ ModifierDeclaration
 
 FunctionDeclaration
   = FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ body:FunctionBody
+    {
+      return {
+        type: "FunctionDeclaration",
+        name: fnname.name,
+        params: fnname.params,
+        modifiers: args,
+        returnParams: returns,
+        body: body,
+        is_abstract: false,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+  / ConstructorToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ body:FunctionBody
     {
       return {
         type: "FunctionDeclaration",

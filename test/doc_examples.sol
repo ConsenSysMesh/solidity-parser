@@ -472,6 +472,14 @@ contract eventEmit {
   }
 }
 
+contract usesConstructor {
+  uint z = 5;
+
+  constructor(uint x){
+    z = 5;
+  }
+}
+
 library Array256Lib {
   function sumElements(uint256[] storage self) constant returns(uint256 sum) {
     assembly {
