@@ -171,6 +171,9 @@ IdentifierName "identifier"
       };
     }
 
+Interpolation
+  = "{{" __ name:IdentifierName __ "}}" { return name; }
+
 IdentifierStart
   = UnicodeLetter
   / "$"
@@ -200,12 +203,12 @@ UnicodeConnectorPunctuation
 
 ReservedWord
   = Keyword
-  / FutureReservedWord
   / NullToken
   / BooleanLiteral
 
 Keyword
   = BreakToken
+  / ConstructorToken
   / ContinueToken
   / ContractToken
   / InterfaceToken
@@ -458,15 +461,18 @@ AsToken         = "as"         !IdentifierPart
 BreakToken      = "break"      !IdentifierPart
 ClassToken      = "class"      !IdentifierPart
 ConstantToken   = "constant"   !IdentifierPart
+ConstructorToken = "constructor" !IdentifierPart
 ContinueToken   = "continue"   !IdentifierPart
 ContractToken   = "contract"   !IdentifierPart
 DaysToken       = "days"       !IdentifierPart
 DeleteToken     = "delete"     !IdentifierPart
 DoToken         = "do"         !IdentifierPart
 ElseToken       = "else"       !IdentifierPart
+EmitToken       = "emit"       !IdentifierPart
 EnumToken       = "enum"       !IdentifierPart
 EtherToken      = "ether"      !IdentifierPart
 EventToken      = "event"      !IdentifierPart
+ExperimentalToken  = "experimental" !IdentifierPart
 ExportToken     = "export"     !IdentifierPart
 ExtendsToken    = "extends"    !IdentifierPart
 FalseToken      = "false"      !IdentifierPart
@@ -661,6 +667,9 @@ Arguments
   / "(" __ "{" __ args:(NameValueList (__ ",")? )? __ "}" __ ")" {
       return optionalList(extractOptional(args, 0));
     }
+  / "(" __ args:Interpolation __ ")" {
+      return [args];
+    }
 
 ArgumentList
   = head:AssignmentExpression tail:(__ "," __ AssignmentExpression)* {
@@ -687,9 +696,10 @@ LeftHandSideExpression
   = DeclarativeExpression
   / CallExpression
   / NewExpression
+  / Interpolation
 
 Type
-  = literal:(Mapping / Identifier) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
+  = literal:(Mapping / Identifier / FunctionToken __ FunctionName __ ModifierArgumentList? __ ReturnsDeclaration? __ IdentifierName?) members:("." Identifier)* parts:(__"[" __ (Expression)? __ "]")*
   {
     return {
       type: "Type",
@@ -714,7 +724,7 @@ StateVariableSpecifiers
   = specifiers:(VisibilitySpecifier __ ConstantToken?){
     return {
       visibility: specifiers[0][0],
-      isconstant: specifiers[2] ? true: false 
+      isconstant: specifiers[2] ? true: false
     }
   }
   / specifiers:(ConstantToken __ VisibilitySpecifier?){
@@ -724,13 +734,13 @@ StateVariableSpecifiers
     }
   }
 
-StateVariableValue 
+StateVariableValue
   = "=" __ expression:Expression {
     return expression;
   }
 
 StateVariableDeclaration
-  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS  
+  = type:Type __ specifiers:StateVariableSpecifiers? __ id:Identifier __ value:StateVariableValue? __ EOS
   {
     return {
       type: "StateVariableDeclaration",
@@ -745,12 +755,12 @@ StateVariableDeclaration
   }
 
 DeclarativeExpression
-  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier 
+  = type:Type __ storage:StorageLocationSpecifier? __ id:Identifier
   {
     return {
       type: "DeclarativeExpression",
       name: id.name,
-      literal: type, 
+      literal: type,
       storage_location: storage ? storage[0]: null,
       start: location().start.offset,
       end: location().end.offset
@@ -959,7 +969,7 @@ AssignmentOperator
   / "|="
 
 Expression
-  = head:AssignmentExpression tail:(__ "," __ AssignmentExpression)* {
+  = Comma * __ head:AssignmentExpression tail:(Comma+ AssignmentExpression)* __ Comma* {
       return tail.length > 0
         ? { type: "SequenceExpression", expressions: buildList(head, tail, 3) }
         : head;
@@ -975,6 +985,7 @@ Statements
 Statement
   = Block
   / VariableStatement
+  / EmitStatement
   / EmptyStatement
   / PlaceholderStatement
   / ExpressionStatement
@@ -1038,7 +1049,6 @@ VariableDeclarationNoInit
       };
     }
 
-
 VariableDeclarationList
   = head:VariableDeclaration tail:(__ "," __ VariableDeclaration)* {
       return buildList(head, tail, 3);
@@ -1057,6 +1067,16 @@ VariableDeclaration
 
 Initialiser
   = "=" !"=" __ expression:AssignmentExpression { return expression; }
+
+EmitStatement
+  = EmitToken __ expression:CallExpression __ EOS {
+    return {
+      type: "EmitStatement",
+      expression: expression,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 EmptyStatement
   = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }
@@ -1103,6 +1123,15 @@ PragmaStatement
     return {
       type: "PragmaStatement",
       start_version: start_version,
+      end_version: end_version,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+  / PragmaToken __ ExperimentalToken __ end_version:StringLiteral __ EOS {
+    return {
+      type: "PragmaStatement",
+      start_version: "experimental",
       end_version: end_version,
       start: location().start.offset,
       end: location().end.offset
@@ -1379,6 +1408,20 @@ FunctionDeclaration
         end: location().end.offset
       };
     }
+  / ConstructorToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ body:FunctionBody
+    {
+      return {
+        type: "FunctionDeclaration",
+        name: fnname.name,
+        params: fnname.params,
+        modifiers: args,
+        returnParams: returns,
+        body: body,
+        is_abstract: false,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
   / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ EOS
     {
       return {
@@ -1393,13 +1436,28 @@ FunctionDeclaration
         end: location().end.offset
       };
     }
+  / FunctionToken __ fnname:FunctionName __ args:ModifierArgumentList? __ returns:ReturnsDeclaration? __ IdentifierName? __ EOS
+    {
+      return {
+        type: "FunctionDeclaration",
+        name: fnname.name,
+        params: fnname.params,
+        modifiers: args,
+        returnParams: returns,
+        body: null,
+        is_abstract: true,
+        start: location().start.offset,
+        end: location().end.offset
+      };
+    }
+
 
 ReturnsDeclaration
   = ReturnsToken __ params:("(" __ InformalParameterList __ ")")
   {
     return params != null ? params [2] : null;
   }
-    
+
 
 FunctionName
   = id:Identifier? __ params:("(" __ InformalParameterList? __ ")")
@@ -1514,7 +1572,7 @@ StructDeclaration
   }
 
 DeclarativeExpressionList
-  = head:DeclarativeExpression __ EOS tail:( __ DeclarativeExpression __ EOS )*
+  = head:(DeclarativeExpression __ EOS / FunctionDeclaration __) tail:( __ DeclarativeExpression __ EOS / __ FunctionDeclaration )*
   {
     return {
       type: "DeclarativeExpressionList",
@@ -1575,10 +1633,17 @@ AssemblyItem
   / InlineAssemblyBlock
   / AssemblyLocalBinding
   / AssemblyAssignment
-  / NumericLiteral
+  / AssemblyLabel
+  / AssemblySwitch
+  / AssemblyFunctionDefinition
+  / AssemblyFor
+  / AssemblyLiteral
+  / Identifier
+
+AssemblyLiteral
+  = NumericLiteral
   / StringLiteral
   / HexStringLiteral
-  / Identifier
 
 AssemblyExpression
   = FunctionalAssemblyInstruction
@@ -1601,7 +1666,7 @@ AssemblyLocalBinding
   }
 
 AssemblyAssignment
-  = name:Identifier __ ':=' __ expression:FunctionalAssemblyInstruction {
+  = name:Identifier __ ':=' __ expression:AssemblyExpression {
     return {
       type: "AssemblyAssignment",
       name: name,
@@ -1619,7 +1684,24 @@ AssemblyAssignment
     }
   }
 
-ReturnOpCode 
+AssemblyIdentifierList
+  = Identifier ( ',' Identifier )*
+
+AssemblyCase
+  = __ 'case' __ AssemblyLiteral __ ':' InlineAssemblyBlock
+
+AssemblySwitch
+  = __ 'switch' __ AssemblyExpression __ AssemblyCase* __ ( 'default' ':' InlineAssemblyBlock )?
+
+
+AssemblyFunctionDefinition
+  = 'function' __ Identifier __ '(' AssemblyIdentifierList? ')' __ ( '->'  AssemblyIdentifierList )? __ InlineAssemblyBlock
+
+AssemblyFor
+  = 'for' __ ( InlineAssemblyBlock / AssemblyExpression )
+     __ AssemblyExpression __ ( InlineAssemblyBlock / AssemblyExpression ) __ InlineAssemblyBlock
+
+ReturnOpCode
   = 'return' {
     return {
       type: "Identifier",
@@ -1635,6 +1717,16 @@ FunctionalAssemblyInstruction
       type: "FunctionalAssemblyInstruction",
       name: name,
       arguments: buildList(head, tail, 2),
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
+
+AssemblyLabel
+  = name:(Identifier) __ ':' {
+    return {
+      type: "AssemblyLabel",
+      name: name,
       start: location().start.offset,
       end: location().end.offset
     }

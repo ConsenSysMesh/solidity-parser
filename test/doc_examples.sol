@@ -10,6 +10,7 @@ pragma solidity < 0.4.0;
 pragma solidity > 0.4.0;
 pragma solidity != 0.4.0;
 pragma solidity >=0.4.0 <0.4.8; // from https://github.com/ethereum/solidity/releases/tag/v0.4.0
+pragma experimental "v0.5.0";
 
 import "SomeFile.sol";
 import "SomeFile.sol" as SomeOtherFile;
@@ -307,7 +308,7 @@ contract assemblyLocalBinding {
       let v := 1
       let x := 0x00
       let y := x
-      let z := "hello" 
+      let z := "hello"
     }
   }
 }
@@ -365,7 +366,7 @@ contract VariableDeclarationTuple {
   function getMyTuple() returns (bool, bool){
     return (true, false);
   }
-  
+
   function ham (){
     var (x, y) = (10, 20);
     var (a, b) = getMyTuple();
@@ -412,9 +413,167 @@ contract Ballot {
     });
 }
 
+contract GnosisInterpolations {
+    uint constant x = 2;
+    EventFactory constant eventFactory = EventFactory({{EventFactory}});
+    address constant marketMaker = {{LMSRMarketMaker}};
+}
+
 contract multilineReturn {
   function a() returns (uint x) {
     return
       5;
+  }
+}
+
+contract tupleAssignmentToMemberExpression {
+  struct Vote {
+    mapping (address => uint) voted;
+  }
+
+  Vote vote;
+  uint t;
+
+  function test(){
+    var x = 1;
+    var y = 2;
+    var isYay = true;
+    (,y) = (0,2);
+    //(,vote.voted[msg.sender]) = (0,1);
+    //(,vote.voted[msg.sender]) = isYay ? (0,1) : (0,2);
+  }
+}
+
+contract structWithFunctionDefinition {
+  struct Fn {
+    bytes32 a;
+    function(bytes32) internal constant returns(bool) startConditions;
+    function(bytes32) internal constant endConditions;
+  }
+}
+
+contract functionThatReceivesAFunction {
+  function fn(function() returns(bool));
+  function fn(function() returns(bool) condition);
+  function fn(function() internal view returns(bool));
+  function fn(function() internal pure returns(bool));
+  function fn(function() internal view returns(bool) v);
+  function fn(function() internal pure returns(bool) p);
+}
+
+contract usesFutureReservedWork {
+  uint class;
+}
+
+contract eventEmit {
+  event Received(uint x);
+  function emit(uint x) {
+    emit Received(x);
+  }
+}
+
+contract usesConstructor {
+  uint z = 5;
+
+  constructor(uint x){
+    z = 5;
+  }
+}
+
+library Array256Lib {
+  function sumElements(uint256[] storage self) constant returns(uint256 sum) {
+    assembly {
+      mstore(0x60,self_slot)
+
+      for { let i := 0 } lt(i, sload(self_slot)) { i := add(i, 1) } {
+        sum := add(sload(add(sha3(0x60,0x20),i)),sum)
+      }
+    }
+  }
+
+  function getMax(uint256[] storage self) constant returns(uint256 maxValue) {
+    assembly {
+      mstore(0x60,self_slot)
+      maxValue := sload(sha3(0x60,0x20))
+
+      for { let i := 0 } lt(i, sload(self_slot)) { i := add(i, 1) } {
+        switch gt(sload(add(sha3(0x60,0x20),i)), maxValue)
+        case 1 {
+          maxValue := sload(add(sha3(0x60,0x20),i))
+        }
+      }
+    }
+  }
+
+  function getMin(uint256[] storage self) constant returns(uint256 minValue) {
+    assembly {
+      mstore(0x60,self_slot)
+      minValue := sload(sha3(0x60,0x20))
+
+      for { let i := 0 } lt(i, sload(self_slot)) { i := add(i, 1) } {
+        switch gt(sload(add(sha3(0x60,0x20),i)), minValue)
+        case 0 {
+          minValue := sload(add(sha3(0x60,0x20),i))
+        }
+      }
+    }
+  }
+
+  function indexOf(uint256[] storage self, uint256 value, bool isSorted) constant
+           returns(bool found, uint256 index) {
+    assembly{
+      mstore(0x60,self_slot)
+      switch isSorted
+      case 1 {
+        let high := sub(sload(self_slot),1)
+        let mid := 0
+        let low := 0
+        for { } iszero(gt(low, high)) { } {
+          mid := div(add(low,high),2)
+
+          switch lt(sload(add(sha3(0x60,0x20),mid)),value)
+          case 1 {
+             low := add(mid,1)
+          }
+          case 0 {
+            switch gt(sload(add(sha3(0x60,0x20),mid)),value)
+            case 1 {
+              high := sub(mid,1)
+            }
+            case 0 {
+              found := 1
+              index := mid
+              low := add(high,1)
+            }
+          }
+        }
+      }
+      case 0 {
+        for { let low := 0 } lt(low, sload(self_slot)) { low := add(low, 1) } {
+          switch eq(sload(add(sha3(0x60,0x20),low)), value)
+          case 1 {
+            found := 1
+            index := low
+            low := sload(self_slot)
+          }
+        }
+      }
+    }
+  }
+
+  function tag(){
+    assembly{
+      let n := calldataload(4)
+      let a := 1
+      let b := a
+    loop:
+      jumpi(loopend, eq(n, 0))
+      a add swap1
+      n := sub(n, 1)
+      jump(loop)
+    loopend:
+      mstore(0, a)
+      return(0, 0x20)
+    }
   }
 }
