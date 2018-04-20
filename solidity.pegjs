@@ -1067,7 +1067,14 @@ Initialiser
   = "=" !"=" __ expression:AssignmentExpression { return expression; }
 
 EmitStatement
-  = EmitToken __ expression:CallExpression { return expression; }
+  = EmitToken __ expression:CallExpression __ EOS {
+    return {
+      type: "EmitStatement",
+      expression: expression,
+      start: location().start.offset,
+      end: location().end.offset
+    }
+  }
 
 EmptyStatement
   = ";" { return { type: "EmptyStatement", start: location().start.offset, end: location().end.offset }; }
