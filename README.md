@@ -2,13 +2,13 @@
 [![npm](https://img.shields.io/npm/dm/solidity-parser.svg)]()
 [![Build Status](https://travis-ci.org/ConsenSys/solidity-parser.svg?branch=master)](https://travis-ci.org/ConsenSys/solidity-parser)
 
+## ⚠️  DEPRECATION NOTICE ⚠️
+
+This library is not being maintained anymore. For an up-to-date Solidity parser, check out [solidity-parser-antlr](https://github.com/federicobond/solidity-parser-antlr).
+
 # Solidity Parser
 
 A Solidity parser in Javascript. So we can evaluate and alter Solidity code without resorting to cruddy preprocessing.  
-
-### ⚠️ WARNING ⚠️
-
-This is pre-alpha software. The goal of it is to take Solidity code as input and return an object as output that can be used to correctly describe that Solidity code. The structure of the resultant object is highly likely to change as the parser's features get filled out. **This parser is set to ignore Solidity constructs it's not yet able to handle.** Or, it might just error. So watch out.
 
 ### Usage
 
