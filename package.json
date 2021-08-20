@@ -9,6 +9,10 @@
     "test": "mocha --timeout 5000 --reporter spec",
     "lint": "eslint ."
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ConsenSysMesh/solidity-parser.git"
+  },
   "bin": {
     "solidity-parser": "./cli.js"
   },
